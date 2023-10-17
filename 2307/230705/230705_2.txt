@@ -1,0 +1,10 @@
+insert into student(num, name, age, address, major, score)
+values(6666,'hong',23,'suwon','korea',89);
+insert into student(num, name, age, address, major, score)
+values(7777,'gilsung',24,'seoul','english',87);
+insert into student(num, name, age, address, major, score)
+values(8888,'leesunsin',22,'korea','computer',57);
+insert into student(num, name, age, address, major, score)
+values(9999,'kaung',23,'incheon','english',67);
+insert into student(num, name, age, address, major, score)
+values(0001,'sunny',21,'suwon','korea',97);

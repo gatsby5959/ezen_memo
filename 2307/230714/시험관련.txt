@@ -1,0 +1,196 @@
+-SQL활용, SQL작성 시험
+
+ppt에 과목, 이름 제출  ~
+
+제출Email : dhalfks0228@naver.com
+제목 : 본인이름, 파일첨부
+
+ppt에 1page 과목, 이름
+2page 명령어 결과
+
+
+
+1
+select * from professor p
+join guide g on g.gu_pr_num = p.pr_num
+join student s on s.st_num = g.gu_st_num
+and p.pr_name='홍길동';
+
+2
+select su.su_point, 
+avg(a.at_mid) '중간', 
+avg(a.at_final) '기말',
+avg(a.at_attend) '출석',
+avg(a.at_homework) '과제'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+group by su.su_point
+
+
+3
+select su.su_point, 
+avg(a.at_mid) '중간', 
+avg(a.at_final) '기말',
+avg(a.at_attend) '출석',
+avg(a.at_homework) '과제'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+group by su.su_point
+
+
+4.
+select su.su_title, 
+sum(a.at_mid) '중간', 
+sum(a.at_final) '기말',
+sum(a.at_attend) '출석',
+sum(a.at_homework) '과제'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+group by su.su_title
+
+select distinct(s.st_name) '재수강자 명단'
+from attend a
+join student s on s.st_num = a.at_st_num
+where a.at_repetition = 'y';
+
+
+
+
+5.
+select s.st_num, s.st_name, sum(su.su_point) 
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+join student s on s.st_num = a.at_st_num
+where a.at_repetition = 'n'
+group by s.st_num;
+
+
+6. 
+update student set st_point = 0;
+
+
+select s.st_num, s.st_name, sum(su.su_point) 
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+join student s on s.st_num = a.at_st_num
+where a.at_repetition = 'n'
+group by s.st_num;
+
+update student set st_point = (
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = student.st_num
+group by a.at_st_num);
+
+
+
+
+7.
+select s.st_num '학번', s.st_name '이름', 
+concat( su_title,  concat( '(' , concat(c.co_year,   concat('_' , concat(c.co_term, ')'  )  ) ) ) ) as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+join student s on s.st_num = a.at_st_num
+group by s.st_num,s.st_name, su_title, c.co_year, c.co_term;
+
+
+
+8.
+create view pass_view as
+select s.st_num '학번', s.st_name '이름', su.su_title '과목' , s.st_point '학점'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+join student s on s.st_num = a.at_st_num
+where a.at_pass= 'p'
+group by s.st_num, s.st_name, su.su_title, s.st_point;
+
+
+9.
+create view gildong_view as
+select s.st_num '학번', 
+s.st_name '이름', 
+s.st_point '학점' 
+from professor p
+join guide g on p.pr_num = g.gu_pr_num
+join student s on s.st_num = g.gu_st_num
+where p.pr_name = '강길동';
+
+10.
+create view kim_view as
+select  su.su_title '과목이름' , su.su_point '학점' , su.su_time '시수'
+from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_num = a.at_co_num
+join student s on s.st_num = a.at_st_num
+where s.st_name= '김영철'
+group by  su.su_title, su.su_point, su.su_time;
+
+
+
+
+
+
+
+
+
+---활용----
+1.
+ create table member(
+      id varchar(10),
+      name varchar(10) not null,
+      age int,
+      address varchar(60) not null,
+      primary key(id)
+     );
+
+
+ create table order1(
+      order_num varchar(10),
+      order_customer varchar(10) not null,
+      order_product varchar(20) not null,
+      order_amount int not null,
+      order_date DATE,
+      foreign key(order_customer) references member(id),
+      primary key(order_num)
+     );
+
+
+2.
+insert into member values
+('dragon','박문수',20,'seoul'),
+('sky','김유신',30,'busan'),
+('blue','이순신',25,'incheon');
+
+
+insert into order1 values
+('o01','sky','cake',1,'2022-04-05'),
+('o02','blue','croquette',3,'2022-04-10'),
+('o03','sky','bread',5,'2022-04-22'),
+('o04','blue','donut',2,'2022-04-30'),
+('o05','dragon','bread',4,'2022-05-02'),
+('o06','sky','baguette',2,'2022-05-10'),
+('o07','dragon','riceburn',7,'2022-05-25');
+
+
+3.
+select * from member where name = '신';
+
+4.
+select o.order_product, o.order_amount from member m
+join order1 o on m.id = o.order_customer
+where m.name = '김유신';
+
+5. 
+create view great_order as
+select m.id, o.order_product, o.order_amount, o.order_date
+from member m
+join order1 o on m.id = o.order_customer
+where o.order_amount>=3;

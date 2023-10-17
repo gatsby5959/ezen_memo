@@ -1,0 +1,156 @@
+course 테이블에 해당 과목을 수강하는 인원을 집게하는 필드를 생성
+alter table course add co_degree int default 0;
+
+co_degree 필드에 해당 코스를 듣고있는 인원수를 집계하여 업데이트
+update course set co_degree = (
+select count(at_co_code) from attend
+where at_co_code = co_code
+group by at_co_code);
+
+
+-트리거
+attend에 수강신청을 하면 course의 co_degree가 자동으로 증가
+attend table 에 inssert에 insert를 하면
+
+
+
+delimiter //
+create trigger insert_attend after insert on attend
+for each row
+begin
+update course set co_degree = co_degree + 1
+where co_code = new.at_co_code;
+end //
+delimiter ;
+
+
+
+insert into a attend(at_std_num, at_co_code)
+values('2020160002','2020ipc001');
+
+
+
+
+
+
+-----------------
+-attend에서 수강신청을 수정하면 course의
+co_degree가 자동으로 집계되도록 트리거 설정
+
+- insert(new), update(old, new), delete(old)
+- old : 기존(트리거발생전)에 테이블에 있던 값
+- new : 트리거 발생 전에 존재하지 않았던 새로 들어가는 값
+
+DELIMITER //
+create trigger update_attend after update on attend
+for each row
+begin
+update course set co_degree = co_degree - 1
+where co_code = old.at_co_code;
+update course set co_degree = co_degree + 1
+where co_code = new.at_co_code;
+end //
+delimiter ;
+
+이하동작안했음
+drop trigger if exists update_attend;
+delimiter //
+create trigger update_attend after update on attend
+for each row
+begin
+update course set co_degree  = (
+case 
+when co_code = new.at_co.code then co_degree+1
+when co_code = old.at_co.code then co_degree-1
+else co_degree
+end);
+end // 
+delimiter ;
+
+
+update attend set at_co_code = '2020ipc002' where at_num = 17;
+
+
+프로시저 사용
+product / buy테이블에서 사용
+제품명을 입력하면 그 제품을 구매한 customer를 반환
+폴라티셔츠 라는 제품명을 입력하면
+구매한 손님 리스트를 반환
+프로시저명 : select_buy
+매개변수 : 제품명 (in_product_name)
+
+drop procedure if exists select_buy;
+delimiter //
+create procedure select_buy(
+in in_product_name varchar(40))
+begin
+select customer from buy
+where product_name = in_product_name;
+end //
+delimiter ;
+
+
+call select_buy('콜라 티셔츠');
+
+call select_buy('순면라운드 반팔티');
+
+
+과제
+college DB 이용
+student 테이블의 st_point(이수학점)를 업데이트 하시오.
+학점을 주는 조건은 at_repetition = 'n' 이면 학점을 획득
+(재수강을 안하면 학점을 획득)
+1. attend 테이블의 at_co_num가 어느과목인지 먼저확인
+2. 해당 과목의 학점(su_point)을 체크해서 st_point에 update,
+
+call update_stpoint(학번); //한번에 한명씩
+call update_stpoint(); //한번에 모조리다
+
+drop procedure if exists update_stpoint;
+
+create procedure update_stpoint(
+in in_std_num int
+begin
+update student set  st_point = (
+select sub.su_point
+from subject sub,
+course c,
+attend a,
+student stud
+where sub.su_num = c.co_su_num
+and a.at_co_num =c.co_num
+and stud.st_num = a.at_st_num
+and stud.st_num =  in_std_num
+and a.at_repetition = 'n' 
+group by sub.su_num,  sub.su_point, stud.st_num
+)
+
+end //
+delimiter ;
+
+
+
+
+select sub.su_num, sub.su_point,stud.st_num
+from subject sub,
+course c,
+attend a,
+student stud
+where sub.su_num = c.co_su_num
+and a.at_co_num =c.co_num
+and stud.st_num = a.at_st_num
+and stud.st_num = 2020123001
+and a.at_repetition = 'n' 
+group by sub.su_num,  sub.su_point, stud.st_num;
+
+select sub.su_point
+from subject sub,
+course c,
+attend a,
+student stud
+where sub.su_num = c.co_su_num
+and a.at_co_num =c.co_num
+and stud.st_num = a.at_st_num
+and stud.st_num = 2020123001
+and a.at_repetition = 'n' 
+group by sub.su_num,  sub.su_point, stud.st_num;

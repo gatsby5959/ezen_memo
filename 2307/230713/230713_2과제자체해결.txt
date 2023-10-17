@@ -1,0 +1,86 @@
+-------------------------------------
+update student st 
+set st.st_point =  select sum(sub.su_point)
+from student st
+JOIN attend a ON st.st_num = a.at_st_num
+JOIN course c ON a.at_co_num = c.co_num
+JOIN subject sub ON sub.su_num = c.co_su_num
+WHERE st.st_num = in_std_num
+AND a.at_repetition = 'n')
+where st.st_num = in_std_num
+;
+----------------------------------------
+
+
+
+
+
+DROP PROCEDURE IF EXISTS update_stpoint;
+DELIMITER //
+CREATE PROCEDURE update_stpoint(
+IN in_std_num INT)
+BEGIN
+update student
+set st_point =  (select sum(sub.su_point)
+from student st2
+JOIN attend a ON st2.st_num = a.at_st_num
+JOIN course c ON a.at_co_num = c.co_num
+JOIN subject sub ON sub.su_num = c.co_su_num
+WHERE st2.st_num = in_std_num
+AND a.at_repetition = 'n')
+where st_num = in_std_num;
+END //
+DELIMITER ;
+
+
+call  PROCEDURE
+call update_stpoint(2020123001);
+
+
+
+DROP PROCEDURE IF EXISTS update_stpoint;
+DELIMITER //
+CREATE PROCEDURE update_stpoint(
+IN in_std_num INT)
+BEGIN
+    UPDATE student 
+    JOIN 
+    (
+        SELECT st2.st_num, SUM(sub.su_point) AS total
+        FROM student st2
+        JOIN attend a ON st2.st_num = a.at_st_num
+        JOIN course c ON a.at_co_num = c.co_num
+        JOIN subject sub ON sub.su_num = c.co_su_num
+        WHERE st2.st_num = in_std_num
+        AND a.at_repetition = 'n'
+        GROUP BY st2.st_num
+    ) t ON student.st_num = t.st_num
+    SET student.st_point = t.total
+    WHERE student.st_num = in_std_num;
+END //
+DELIMITER ;
+
+
+call update_stpoint(2020123001);
+
+
+
+DROP PROCEDURE IF EXISTS update_all_students;
+DELIMITER //
+CREATE PROCEDURE update_all_students()
+BEGIN
+    UPDATE student 
+    JOIN 
+    (
+        SELECT st2.st_num, SUM(sub.su_point) AS total
+        FROM student st2
+        JOIN attend a ON st2.st_num = a.at_st_num
+        JOIN course c ON a.at_co_num = c.co_num
+        JOIN subject sub ON sub.su_num = c.co_su_num
+        WHERE a.at_repetition = 'n'
+        GROUP BY st2.st_num
+    ) t ON student.st_num = t.st_num
+    SET student.st_point = t.total;
+END //
+DELIMITER ;
+call update_stpoint();

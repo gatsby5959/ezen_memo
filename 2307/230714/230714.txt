@@ -1,0 +1,130 @@
+
+drop procedure if exists update_stpoint;
+delimiter//
+create procedure update_stpoint()
+begin
+
+update student set st_point = ( 
+select sum(s.su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = st_num
+group by a.at_st_num);
+
+end//
+delimiter ;
+
+
+drop procedure if exists update_stpoint;
+delimiter //
+create procedure update_stpoint()
+begin
+update sutdent set st_point =(
+select sum(s.su_point) from subject s
+join course on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetiton = "N" and a.at_st_num = st_num
+group by a.at_st_num);
+end//
+delimiter ;
+
+
+--동훈버전---
+drop procedure if exists update_stpoint;
+
+delimiter //
+create procedure update_stpoint()
+begin
+update student set st_point = (
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = student.st_num
+group by a.at_st_num);
+end//
+delimiter ;
+
+update student set st_point = 0;
+
+call update_stpoint();
+
+
+-----
+
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student st on at_st_num = st_num
+where a.at_repetition = 'n' and a.at_st_num = st_num
+group by a.at_st_num;
+
+
+
+update student set st_point = (
+select sum(s.su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = st_num
+group by a.at_st_num);
+
+-----
+
+
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = st_num
+group by a.at_st_num
+
+
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+where a.at_repetition = 'n' and a.at_st_num = 2020456001
+group by a.at_st_num
+
+
+-------------------------
+
+매개변수 이용하여 한명만 변경
+
+call update_point(학번);
+
+sum(st_point) 값을 변수로 저장
+drop procedure if exists update_point;
+delimiter //
+create procedure update_point(
+in in_st_num int)
+begin
+declare _sum int default 0;
+set _sum = (
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student std on std.st_num = a.at_st_num
+where a.at_repetition = 'n' and std.st_num = in_st_num);
+
+update student set st_point = _sum
+where st_num = in_st_num;
+
+select * from student;
+end //
+
+delimiter ;
+
+
+call update_point('2020123001'); 
+
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student std on std.st_num = a.at_st_num
+where a.at_repetition = 'n' and std.st_num = '2020123001';
+
+select sum(su_point) from subject s
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student std on std.st_num = a.at_st_num
+where a.at_repetition = 'n' and std.st_num = '2020160001';
+
+

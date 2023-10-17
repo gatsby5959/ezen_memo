@@ -1,0 +1,22 @@
+JDBC 연결
+- 상품관리 프로그램
+- menu
+1.상품등록 | 2.상품목록 | 3.상품검색(상품상세)
+4.상품수정 | 5.상품삭제 | 6.종료
+
+
+DB 테이블 구조 == class구조
+mysql -u mysqluser -p
+유저/비번
+mysqluser / mysql
+등록된 상품을 테이블에 저장
+데이터베이스 -> 상품테이블
+번호(pro) : 자동증가
+상품명(pname) : varchar(100)
+가격(price) : int
+등록일(regdate) : 오늘날짜
+상세설명(madeby): text
+
+DB 연결시 필요한 라이브러리
+https://mvnrepository.com/   => 필요한 라이브러리 다운
+mysql-connector-java-8.0.28.jar

@@ -1,0 +1,2877 @@
+Microsoft Windows [Version 10.0.19045.3208]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 29
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use mysqltest
+ERROR 1044 (42000): Access denied for user 'mysqluser'@'localhost' to database 'mysqltest'
+mysql> use college
+Database changed
+mysql> show database
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'database' at line 1
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| college            |
+| ezentest           |
+| information_schema |
+| performance_schema |
+| school             |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+ERROR 1419 (HY000): You do not have the SUPER privilege and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)
+mysql> delimiter ;
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on c.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1054 (42S22): Unknown column 's.su_point' in 'field list'
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on c.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1054 (42S22): Unknown column 'c.at_co_num' in 'on clause'
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1054 (42S22): Unknown column 'c.co_num' in 'on clause'
+mysql> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num
+    -> ;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1054 (42S22): Unknown column 'c.co_num' in 'on clause'
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> delimiter//
+    -> create procedure update_stpoint()
+    -> begin
+    ->
+    -> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure update_stpoint()
+begin
+
+update student set st_point ' at line 1
+mysql>
+mysql> end//
+    -> delimiter;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end//
+delimiter' at line 1
+mysql>
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> delimiter//
+    -> create procedure update_stpoint()
+    -> begin
+    ->
+    -> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure update_stpoint()
+begin
+
+update student set st_point ' at line 1
+mysql>
+mysql> end//
+    -> delimiter ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end//
+delimiter' at line 1
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> delimiter//
+    -> create procedure update_stpoint()
+    -> begin
+    ->
+    -> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimiter//create procedure update_stpoint()
+begin
+
+update student set st_point ' at line 1
+mysql>
+mysql> end//
+    -> delimiter ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'end//
+delimiter' at line 1
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update sutdent set st_point =(
+    -> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetiton = "N" and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+ERROR 1304 (42000): PROCEDURE update_stpoint already exists
+mysql> delimiter ;
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update sutdent set st_point =(
+    -> select sum(s.su_point) from subject s
+    -> join course on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetiton = "N" and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+ERROR 1304 (42000): PROCEDURE update_stpoint already exists
+mysql> delimiter ;
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql>
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+ERROR 1304 (42000): PROCEDURE update_stpoint already exists
+mysql> delimiter ;
+mysql>
+mysql> update student set st_point = 0;
+Query OK, 4 rows affected (0.01 sec)
+Rows matched: 5  Changed: 4  Warnings: 0
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> call update_stpoint();
+ERROR 1318 (42000): Incorrect number of arguments for PROCEDURE college.update_stpoint; expected 1, got 0
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> call update_stpoint();
+ERROR 1318 (42000): Incorrect number of arguments for PROCEDURE college.update_stpoint; expected 1, got 0
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql>
+mysql>
+mysql> drop procedure if exists update_stpoint;
+ERROR 1227 (42000): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -uroot -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 35
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use college
+Database changed
+mysql> drop procedure if exists update_stpoint;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 36
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> drop procedure if exists update_stpoint;
+ERROR 1046 (3D000): No database selected
+mysql>
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+ERROR 1046 (3D000): No database selected
+mysql> delimiter ;
+mysql> select * from student;
+ERROR 1046 (3D000): No database selected
+mysql> use college
+Database changed
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> call update_stpoint();
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> drop procedure if exists update_stpoint;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> call update_stpoint();
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 5
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> drop procedure if exists update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+    -> end//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> update student set st_point = 0;
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 5  Changed: 0  Warnings: 0
+
+mysql> call update_stpoint();
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> call update_stpoint();
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> desc student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| st_num   | int         | NO   | PRI | NULL    |       |
+| st_name  | varchar(20) | NO   |     | NULL    |       |
+| st_term  | int         | NO   |     | 0       |       |
+| st_point | int         | NO   |     | 0       |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
+ERROR 1054 (42S22): Unknown column 'st_num' in 'where clause'
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = 2020456001
+    -> group by a.at_st_num;
++---------------+
+| sum(su_point) |
++---------------+
+|             8 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> drop procedure if exists update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>
+mysql> delimiter //
+mysql> create procedure update_stpoint()
+    -> begin
+    -> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = student.st_num
+    -> group by a.at_st_num);
+    -> end//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> call update_stpoint();
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on at_st_num = st_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num;
++---------------+
+| sum(su_point) |
++---------------+
+|             8 |
+|             3 |
+|            12 |
+|             8 |
++---------------+
+4 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = student.st_num
+    -> group by a.at_st_num);
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> desc student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| st_num   | int         | NO   | PRI | NULL    |       |
+| st_name  | varchar(20) | NO   |     | NULL    |       |
+| st_term  | int         | NO   |     | 0       |       |
+| st_point | int         | NO   |     | 0       |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select sum(1) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+ERROR 1048 (23000): Column 'st_point' cannot be null
+mysql> alter table student modify st_point int default 0;
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| st_num   | int         | NO   | PRI | NULL    |       |
+| st_name  | varchar(20) | NO   |     | NULL    |       |
+| st_term  | int         | NO   |     | 0       |       |
+| st_point | int         | YES  |     | 0       |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select sum(s.su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+Query OK, 5 rows affected (0.01 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select if(sum(s.su_point) is null, 0, sum(s.su_point)) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 5  Changed: 0  Warnings: 0
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> update student set st_point=0;
+Query OK, 5 rows affected (0.01 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> update student set st_point = (
+    -> select if(sum(s.su_point) is null, 0, sum(s.su_point)) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = st_num
+    -> group by a.at_st_num);
+Query OK, 5 rows affected (0.00 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+ERROR 1419 (HY000): You do not have the SUPER privilege and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)
+mysql> delimiter ;
+mysql>
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -uroot -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 37
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use college
+Database changed
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -umysqluser -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'mysqluser'@'localhost' (using password: YES)
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 39
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> drop trigger if exists update_attend;
+ERROR 1046 (3D000): No database selected
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+ERROR 1046 (3D000): No database selected
+mysql> delimiter ;
+mysql> use college
+Database changed
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+ERROR 1419 (HY000): You do not have the SUPER privilege and binary logging is enabled (you *might* want to use the less safe log_bin_trust_function_creators variable)
+mysql> delimiter ;
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -uroot -pezen;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+
+C:\Users\EZENIC-166>mysql -uroot -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 41
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use college
+Database changed
+mysql> drop trigger if exists update_attend;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger update_attend after update on attend
+    -> for each row
+    -> begin
+    -> update course set co_degree  = (
+    -> case
+    -> when co_code = new.at_co.code then co_degree+1
+    -> when co_code = old.at_co.code then co_degree-1
+    -> else co_degree
+    -> end);
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter ;
+mysql> exit;
+Bye
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'mysqluser'@'localhost' (using password: YES)
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 43
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use college
+Database changed
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.at_st_num = in_st_num)
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 5
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.at_st_num = 2020123001;
+ERROR 1054 (42S22): Unknown column 'std.at_st_num' in 'where clause'
+mysql> where a.at_repetition = 'n' and std.at_st_num = 2020123001;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where a.at_repetition = 'n' and std.at_st_num = 2020123001' at line 1
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = 2020123001
+    -> ;
++---------------+
+| sum(su_point) |
++---------------+
+|             8 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> drop procedure if exists update_point;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure update_point(
+    -> in in_st_num int )
+    -> begin
+    -> declare _sum = int default 0;
+    -> set_sum =(
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = in_st_num);
+    ->
+    -> update student set st_point = _sum
+    -> where st_num = in_st_num
+    ->
+    -> select * from student;
+    -> end//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= int default 0;
+set_sum =(
+select sum(su_point) from subject s
+join course c on' at line 4
+mysql> delimiter ;
+mysql> drop procedure if exists update_point;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure update_point(
+    -> in in_st_num int )
+    -> begin
+    -> declare _sum = int default 0;
+    -> set_sum =(
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = in_st_num);
+    ->
+    -> update student set st_point = _sum
+    -> where st_num = in_st_num;
+    ->
+    -> select * from student;
+    -> end//
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= int default 0;
+set_sum =(
+select sum(su_point) from subject s
+join course c on' at line 4
+mysql> delimiter ;
+mysql> drop procedure if exists update_point;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> delimiter //
+mysql> create procedure update_point(
+    -> in in_st_num int)
+    -> begin
+    -> declare _sum int default 0;
+    -> set _sum = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = in_st_num);
+    ->
+    -> update student set st_point = _sum
+    -> where st_num = in_st_num;
+    ->
+    -> select * from student;
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+mysql> call update_point('2020123001');
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call update_point('2020160001');
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = '2020123001';
++---------------+
+| sum(su_point) |
++---------------+
+|             8 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student std on std.st_num = a.at_st_num
+    -> where a.at_repetition = 'n' and std.st_num = '2020160001';
++---------------+
+| sum(su_point) |
++---------------+
+|          NULL |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> ﻿
+
+For information about MySQL products and services, visit:
+   http://www.mysql.com/
+For developer information, including the MySQL Reference Manual, visit:
+   http://dev.mysql.com/
+To buy MySQL Enterprise support, training, or other products, visit:
+   https://shop.mysql.com/
+
+List of all MySQL commands:
+Note that all text commands must be first on line and end with ';'
+?         (\?) Synonym for `help'.
+clear     (\c) Clear the current input statement.
+connect   (\r) Reconnect to the server. Optional arguments are db and host.
+delimiter (\d) Set statement delimiter.
+ego       (\G) Send command to mysql server, display result vertically.
+exit      (\q) Exit mysql. Same as quit.
+go        (\g) Send command to mysql server.
+help      (\h) Display this help.
+notee     (\t) Don't write into outfile.
+print     (\p) Print current command.
+prompt    (\R) Change your mysql prompt.
+quit      (\q) Quit mysql.
+rehash    (\#) Rebuild completion hash.
+source    (\.) Execute an SQL script file. Takes a file name as an argument.
+status    (\s) Get status information from the server.
+system    (\!) Execute a system shell command.
+tee       (\T) Set outfile [to_outfile]. Append everything into given outfile.
+use       (\u) Use another database. Takes database name as argument.
+charset   (\C) Switch to another charset. Might be needed for processing binlog with multi-byte charsets.
+warnings  (\W) Show warnings after every statement.
+nowarning (\w) Don't show warnings after every statement.
+resetconnection(\x) Clean session context.
+query_attributes Sets string parameters (name1 value1 name2 value2 ...) for the next query to pick up.
+ssl_session_data_print Serializes the current SSL session data to stdout or file
+
+For server side help, type 'help contents'
+
+mysql> SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->
+    -> FROM student st2
+    ->
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->
+    ->  JOIN course c ON a.at_co_num = c.co_num
+    ->
+    ->  JOIN subject sub ON sub.su_num = c.co_su_num
+    ->
+    ->  WHERE st2.st_num = in_std_num
+    ->
+    -> AND a.at_repetition = 'n'
+    ->
+    -> GROUP BY st2.st_num
+    ->
+    -> ;
+ERROR 1054 (42S22): Unknown column 'in_std_num' in 'where clause'
+mysql> SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->
+    -> FROM student st2
+    ->
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->
+    ->  JOIN course c ON a.at_co_num = c.co_num
+    ->
+    ->  JOIN subject sub ON sub.su_num = c.co_su_num
+    ->
+    ->  WHERE st2.st_num =2020123001
+    ->
+    -> AND a.at_repetition = 'n'
+    ->
+    -> GROUP BY st2.st_num
+    ->
+    -> ﻿
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?' at line 17
+mysql> SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->
+    -> FROM student st2
+    ->
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->
+    ->  JOIN course c ON a.at_co_num = c.co_num
+    ->
+    ->  JOIN subject sub ON sub.su_num = c.co_su_num
+    ->
+    ->  WHERE st2.st_num =2020123001
+    ->
+    -> AND a.at_repetition = 'n'
+    ->
+    -> GROUP BY st2.st_num;
++------------+-------+
+| st_num     | total |
++------------+-------+
+| 2020123001 |     8 |
++------------+-------+
+1 row in set (0.00 sec)
+
+mysql> SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->
+    -> FROM student st2
+    ->
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->
+    ->  JOIN course c ON a.at_co_num = c.co_num
+    ->
+    ->  JOIN subject sub ON sub.su_num = c.co_su_num
+    ->
+    ->  WHERE st2.st_num =2020160001
+    ->
+    -> AND a.at_repetition = 'n'
+    ->
+    -> GROUP BY st2.st_num
+    ->
+    -> ;
+Empty set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> use ezentest
+Database changed
+mysql> show tables;
++--------------------+
+| Tables_in_ezentest |
++--------------------+
+| buy                |
+| product            |
+| student            |
+| student_4          |
+| test1              |
+| test2              |
+| test3              |
++--------------------+
+7 rows in set (0.00 sec)
+
+mysql>
+mysql> create table test3_copy as (select * from test3);
+Query OK, 6 rows affected (0.02 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> select * from test_copy;
+ERROR 1146 (42S02): Table 'ezentest.test_copy' doesn't exist
+mysql> select * from test3_copy;
++-----+--------+------------+--------+------+-------+------+
+| num | name   | dep        | addr   | tel  | score | age  |
++-----+--------+------------+--------+------+-------+------+
+| 100 | 홍길동 | 경영학과   | 원주시 | 111  |    78 |   20 |
+| 200 | 김길동 | 경영학과   | 서울시 | 123  |    89 |   20 |
+| 300 | 이길동 | 컴퓨터학과 | 원주시 | 456  |    68 |   20 |
+| 400 | 박길동 | 컴퓨터학과 | 수원시 | 222  |    97 |   20 |
+| 500 | 고길동 | 경영학과   | 서울시 | 333  |    62 |   20 |
+| 600 | 구길동 | 컴퓨터학과 | 인천시 | 789  |    93 |   20 |
++-----+--------+------------+--------+------+-------+------+
+6 rows in set (0.00 sec)
+
+mysql> select * from buy;
++-----+----------+---------------------+-------+--------+---------------------+--------+
+| num | customer | product_name        | price | amount | buy_date            | total  |
++-----+----------+---------------------+-------+--------+---------------------+--------+
+|   1 | 홍길동   | 콜라 티셔츠         | 15000 |      3 | NULL                |  45000 |
+|   2 | 이순신   | 순면라운드 반팔티   | 30000 |     10 | NULL                | 300000 |
+|   3 | 시라소니 | 순면라운드 반팔티   | 50000 |      8 | NULL                | 400000 |
+|   4 | 김신호   | 순면라운드 반팔티   | 30000 |      7 | 2023-07-06 20:32:35 | 210000 |
+|   5 | 장원희   | 롱 패딩 점퍼        | 47400 |      1 | 2023-07-06 20:39:15 |  47400 |
+|   6 | 이성훈   | 양털 겨울 코드      | 50000 |      1 | 2023-07-06 20:40:43 |  50000 |
+|   7 | 류지영   | 양면 롱 후리스 자켓 | 23300 |      2 | 2023-07-06 20:41:17 |  46600 |
+|  10 | 장우호   | 순면라운드 반팔티   | 50000 |      2 | 2023-07-06 20:41:49 | 100000 |
+|  11 | 이동훈   | 에이 나시           |  9000 |      3 | 2023-07-06 20:42:22 |  27000 |
+|  12 | 김소월   | 에이 나시           |  9000 |      5 | 2023-07-06 20:48:16 |  45000 |
++-----+----------+---------------------+-------+--------+---------------------+--------+
+10 rows in set (0.00 sec)
+
+mysql> select * from buy where buy_date = '2323-07-06';
+Empty set (0.00 sec)
+
+mysql> select * from buy where buy_date like '2323-07-06%';
+Empty set (0.00 sec)
+
+mysql> select * from buy where buy_date = '2023-07-06';
+Empty set (0.00 sec)
+
+mysql> select * from buy where buy_date like '2023-07-06%';
++-----+----------+---------------------+-------+--------+---------------------+--------+
+| num | customer | product_name        | price | amount | buy_date            | total  |
++-----+----------+---------------------+-------+--------+---------------------+--------+
+|   4 | 김신호   | 순면라운드 반팔티   | 30000 |      7 | 2023-07-06 20:32:35 | 210000 |
+|   5 | 장원희   | 롱 패딩 점퍼        | 47400 |      1 | 2023-07-06 20:39:15 |  47400 |
+|   6 | 이성훈   | 양털 겨울 코드      | 50000 |      1 | 2023-07-06 20:40:43 |  50000 |
+|   7 | 류지영   | 양면 롱 후리스 자켓 | 23300 |      2 | 2023-07-06 20:41:17 |  46600 |
+|  10 | 장우호   | 순면라운드 반팔티   | 50000 |      2 | 2023-07-06 20:41:49 | 100000 |
+|  11 | 이동훈   | 에이 나시           |  9000 |      3 | 2023-07-06 20:42:22 |  27000 |
+|  12 | 김소월   | 에이 나시           |  9000 |      5 | 2023-07-06 20:48:16 |  45000 |
++-----+----------+---------------------+-------+--------+---------------------+--------+
+7 rows in set (0.00 sec)
+
+mysql> desc full tables;
+ERROR 1146 (42S02): Table 'ezentest.full' doesn't exist
+mysql> show full tables;
++--------------------+------------+
+| Tables_in_ezentest | Table_type |
++--------------------+------------+
+| buy                | BASE TABLE |
+| product            | BASE TABLE |
+| student            | BASE TABLE |
+| student_4          | BASE TABLE |
+| test1              | BASE TABLE |
+| test2              | BASE TABLE |
+| test3              | BASE TABLE |
+| test3_copy         | BASE TABLE |
++--------------------+------------+
+8 rows in set (0.00 sec)
+
+mysql> show full view;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'view' at line 1
+mysql> show view;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'view' at line 1
+mysql> show veiw;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'veiw' at line 1
+mysql> use college;
+Database changed
+mysql> shwo full tables;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'shwo full tables' at line 1
+mysql> show full tables;
++-------------------+------------+
+| Tables_in_college | Table_type |
++-------------------+------------+
+| 1term_view        | VIEW       |
+| 1term_view1       | VIEW       |
+| 1term_view2       | VIEW       |
+| attend            | BASE TABLE |
+| course            | BASE TABLE |
+| guide             | BASE TABLE |
+| professor         | BASE TABLE |
+| student           | BASE TABLE |
+| subject           | BASE TABLE |
++-------------------+------------+
+9 rows in set (0.00 sec)
+
+mysql> select * from professor = '홍길동';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= '홍길동'' at line 1
+mysql> select * from professor where pr_name = '홍길동';
++------------+---------+--------+----------+----------+-------------+
+| pr_num     | pr_name | pr_age | pr_room  | pr_state | pr_position |
++------------+---------+--------+----------+----------+-------------+
+| 2005789001 | 홍길동  |     60 | B동302호 | 재직     | 정교수      |
++------------+---------+--------+----------+----------+-------------+
+1 row in set (0.00 sec)
+
+mysql> select * from professor p
+    -> join guide g,
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 2
+mysql> select * from professor p
+    -> join guide g on g.pr_num = p.pr_num
+    -> join student s on s.st_num = g.gu_st_num;
+ERROR 1054 (42S22): Unknown column 'g.pr_num' in 'on clause'
+mysql> select * from professor p
+    -> join guide g on g.gu_pr_num = p.pr_num
+    -> oin student s on s.st_num = g.gu_st_num;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'oin student s on s.st_num = g.gu_st_num' at line 3
+mysql> select * from professor p
+    -> join guide g on g.gu_pr_num = p.pr_num
+    -> join student s on s.st_num = g.gu_st_num;
++------------+---------+--------+----------+----------+-------------+--------+------------+------------+---------+------------+---------+---------+----------+
+| pr_num     | pr_name | pr_age | pr_room  | pr_state | pr_position | gu_num | gu_pr_num  | gu_st_num  | gu_year | st_num     | st_name | st_term | st_point |
++------------+---------+--------+----------+----------+-------------+--------+------------+------------+---------+------------+---------+---------+----------+
+| 2010160001 | 강길동  |     55 | A동202호 | 재직     | 조교수      |      6 | 2010160001 | 2020160001 | 2020    | 2020160001 | 강철수  |       2 |     NULL |
+| 2010160001 | 강길동  |     55 | A동202호 | 재직     | 조교수      |      7 | 2010160001 | 2020160002 | 2020    | 2020160002 | 박철수  |       2 |       12 |
+| 2011123001 | 이순신  |     55 | A동203호 | 재직     | 조교수      |      8 | 2011123001 | 2020123001 | 2020    | 2020123001 | 김영철  |       2 |        8 |
+| 2011123001 | 이순신  |     55 | A동203호 | 재직     | 조교수      |      9 | 2011123001 | 2020123002 | 2020    | 2020123002 | 나영희  |       2 |        3 |
+| 2006456001 | 박영실  |     60 | B동301호 | 안식년   | 정교수      |     10 | 2006456001 | 2020456001 | 2020    | 2020456001 | 강군    |       2 |        8 |
++------------+---------+--------+----------+----------+-------------+--------+------------+------------+---------+------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from professor p
+    -> join guide g on g.gu_pr_num = p.pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> and p.pr_name='홍길동';
+Empty set (0.00 sec)
+
+mysql> select * from course;
++--------+------------+-----------+---------+---------+---------------------+
+| co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        |
++--------+------------+-----------+---------+---------+---------------------+
+|      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |
+|      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |
+|      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |
+|      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |
++--------+------------+-----------+---------+---------+---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num;
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| su_num | su_code | su_title   | su_point | su_time | co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        | at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|      4 | abc001  | 글쓰기     |        2 |       2 |      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|      4 | abc001  | 글쓰기     |        2 |       2 |      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|      4 | abc001  | 글쓰기     |        2 |       2 |      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|      4 | abc001  | 글쓰기     |        2 |       2 |      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
+|      5 | abc002  | 영어       |        2 |       3 |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|      5 | abc002  | 영어       |        2 |       3 |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|      5 | abc002  | 영어       |        2 |       3 |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select su.su_point from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_point;
++----------+
+| su_point |
++----------+
+|        3 |
+|        2 |
++----------+
+2 rows in set (0.00 sec)
+
+mysql> select su.su_point,a.at_mid,a.at_final,a.at_attend,a.at_homework
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_point;
+ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'college.a.at_mid' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> group by su.su_point;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'group by su.su_point' at line 1
+mysql> select su.su_point, avg(a.at_mid), avg(a.at_final),avg(a.at_attend),avg(a.at_homework)
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_point;
++----------+---------------+-----------------+------------------+--------------------+
+| su_point | avg(a.at_mid) | avg(a.at_final) | avg(a.at_attend) | avg(a.at_homework) |
++----------+---------------+-----------------+------------------+--------------------+
+|        3 |       27.5333 |         22.6667 |           7.0000 |             7.4000 |
+|        2 |       27.4167 |         23.9167 |           7.0833 |             7.0000 |
++----------+---------------+-----------------+------------------+--------------------+
+2 rows in set (0.00 sec)
+
+mysql> select su.su_point,
+    -> avg(a.at_mid) '중간',
+    -> avg(a.at_final) '기말',
+    -> avg(a.at_attend) '출석',
+    -> avg(a.at_homework) '과제'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_point;
++----------+---------+---------+--------+--------+
+| su_point | 중간    | 기말    | 출석   | 과제   |
++----------+---------+---------+--------+--------+
+|        3 | 27.5333 | 22.6667 | 7.0000 | 7.4000 |
+|        2 | 27.4167 | 23.9167 | 7.0833 | 7.0000 |
++----------+---------+---------+--------+--------+
+2 rows in set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select su.su_num,
+    -> avg(a.at_mid) '중간',
+    -> avg(a.at_final) '기말',
+    -> avg(a.at_attend) '출석',
+    -> avg(a.at_homework) '과제'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_num;
++--------+---------+---------+--------+--------+
+| su_num | 중간    | 기말    | 출석   | 과제   |
++--------+---------+---------+--------+--------+
+|      1 | 28.0000 | 23.8000 | 7.1000 | 7.1000 |
+|      2 | 26.2000 | 21.8000 | 6.2000 | 7.8000 |
+|      3 | 26.6000 | 20.4000 | 6.8000 | 8.0000 |
+|      4 | 27.2500 | 24.0000 | 6.2500 | 5.2500 |
+|      5 | 29.6667 | 27.3333 | 9.6667 | 8.0000 |
++--------+---------+---------+--------+--------+
+5 rows in set (0.00 sec)
+
+mysql> select su.su_title,
+    -> sum(a.at_mid) '중간',
+    -> sum(a.at_final) '기말',
+    -> sum(a.at_attend) '출석',
+    -> sum(a.at_homework) '과제'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> group by su.su_title;
++------------+------+------+------+------+
+| su_title   | 중간 | 기말 | 출석 | 과제 |
++------------+------+------+------+------+
+| 대학수학   |  280 |  238 |   71 |   71 |
+| 컴퓨터개론 |  131 |  109 |   31 |   39 |
+| 운영체제   |  133 |  102 |   34 |   40 |
+| 글쓰기     |  109 |   96 |   25 |   21 |
+| 영어       |   89 |   82 |   29 |   24 |
++------------+------+------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql>
+mysql> select * from attend a
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_st_num = 'y';
+Empty set, 1 warning (0.00 sec)
+
+mysql> select * from attend a
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'y';
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition | st_num     | st_name | st_term | st_point |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             | 2020123001 | 김영철  |       2 |        8 |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             | 2020123001 | 김영철  |       2 |        8 |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             | 2020123001 | 김영철  |       2 |        8 |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             | 2020123002 | 나영희  |       2 |        3 |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             | 2020123002 | 나영희  |       2 |        3 |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             | 2020123002 | 나영희  |       2 |        3 |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             | 2020160001 | 강철수  |       2 |     NULL |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             | 2020160002 | 박철수  |       2 |       12 |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             | 2020456001 | 강군    |       2 |        8 |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             | 2020456001 | 강군    |       2 |        8 |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+15 rows in set (0.00 sec)
+
+mysql> select distinct(s.st_name) from attend a
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'y';
++---------+
+| st_name |
++---------+
+| 김영철  |
+| 나영희  |
+| 강철수  |
+| 박철수  |
+| 강군    |
++---------+
+5 rows in set (0.00 sec)
+
+mysql> select distinct(s.st_name) '재수강자명단'
+    -> from attend a
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'y';
++--------------+
+| 재수강자명단 |
++--------------+
+| 김영철       |
+| 나영희       |
+| 강철수       |
+| 박철수       |
+| 강군         |
++--------------+
+5 rows in set (0.00 sec)
+
+mysql> select distinct(s.st_name) '재수강자 명단'
+    -> from attend a
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'y';
++---------------+
+| 재수강자 명단 |
++---------------+
+| 김영철        |
+| 나영희        |
+| 강철수        |
+| 박철수        |
+| 강군          |
++---------------+
+5 rows in set (0.00 sec)
+
+mysql> select s.st_num, s.st_name, sum(su.su_point)
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num;
++------------+---------+------------------+
+| st_num     | st_name | sum(su.su_point) |
++------------+---------+------------------+
+| 2020123001 | 김영철  |               15 |
+| 2020123002 | 나영희  |               11 |
+| 2020160001 | 강철수  |               15 |
+| 2020160002 | 박철수  |               15 |
+| 2020456001 | 강군    |               13 |
++------------+---------+------------------+
+5 rows in set (0.00 sec)
+
+mysql> select s.st_num, s.st_name, sum(su.su_point)
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'n'
+    -> group by s.st_num
+    -> ;
++------------+---------+------------------+
+| st_num     | st_name | sum(su.su_point) |
++------------+---------+------------------+
+| 2020123001 | 김영철  |                8 |
+| 2020123002 | 나영희  |                3 |
+| 2020160002 | 박철수  |               12 |
+| 2020456001 | 강군    |                8 |
++------------+---------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> update student set st_point = 0;
+Query OK, 5 rows affected (0.00 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select s.st_num, s.st_name, sum(su.su_point)
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_repetition = 'n'
+    -> group by s.st_num;
++------------+---------+------------------+
+| st_num     | st_name | sum(su.su_point) |
++------------+---------+------------------+
+| 2020123001 | 김영철  |                8 |
+| 2020123002 | 나영희  |                3 |
+| 2020160002 | 박철수  |               12 |
+| 2020456001 | 강군    |                8 |
++------------+---------+------------------+
+4 rows in set (0.00 sec)
+
+mysql> update student set st_point = (
+    -> select sum(su_point) from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> where a.at_repetition = 'n' and a.at_st_num = student.st_num
+    -> group by a.at_st_num);
+Query OK, 5 rows affected (0.01 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from stduent;
+ERROR 1146 (42S02): Table 'college.stduent' doesn't exist
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select s.st_num, s.st_name, su_title
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num;
+ERROR 1055 (42000): Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'college.su.su_title' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select s.st_num, s.st_name, su_title
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name;
+ERROR 1055 (42000): Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'college.su.su_title' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select s.st_num, s.st_name, su_title
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
++------------+---------+------------+
+| st_num     | st_name | su_title   |
++------------+---------+------------+
+| 2020123001 | 김영철  | 대학수학   |
+| 2020123002 | 나영희  | 대학수학   |
+| 2020160001 | 강철수  | 대학수학   |
+| 2020160002 | 박철수  | 대학수학   |
+| 2020456001 | 강군    | 대학수학   |
+| 2020123001 | 김영철  | 컴퓨터개론 |
+| 2020123002 | 나영희  | 컴퓨터개론 |
+| 2020160001 | 강철수  | 컴퓨터개론 |
+| 2020160002 | 박철수  | 컴퓨터개론 |
+| 2020456001 | 강군    | 컴퓨터개론 |
+| 2020123001 | 김영철  | 운영체제   |
+| 2020123002 | 나영희  | 운영체제   |
+| 2020160001 | 강철수  | 운영체제   |
+| 2020160002 | 박철수  | 운영체제   |
+| 2020456001 | 강군    | 운영체제   |
+| 2020123001 | 김영철  | 글쓰기     |
+| 2020160001 | 강철수  | 글쓰기     |
+| 2020160002 | 박철수  | 글쓰기     |
+| 2020456001 | 강군    | 글쓰기     |
+| 2020123001 | 김영철  | 영어       |
+| 2020160001 | 강철수  | 영어       |
+| 2020160002 | 박철수  | 영어       |
++------------+---------+------------+
+22 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat('(',su_title) as '과목(수강년도_학기)',
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'from subject su
+join course c on su.su_num = c.co_su_num
+join attend a on c.co_n' at line 3
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat('(',su_title)) as '과목(수강년도_학기)',
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') as '과목(수강년도_학기)',
+from subject su
+join course c on su.su_num =' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat('(',su_title)) as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num = ' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( '(' , su_title )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | (대학수학           |
+| 2020123002 | 나영희 | (대학수학           |
+| 2020160001 | 강철수 | (대학수학           |
+| 2020160002 | 박철수 | (대학수학           |
+| 2020456001 | 강군   | (대학수학           |
+| 2020123001 | 김영철 | (컴퓨터개론         |
+| 2020123002 | 나영희 | (컴퓨터개론         |
+| 2020160001 | 강철수 | (컴퓨터개론         |
+| 2020160002 | 박철수 | (컴퓨터개론         |
+| 2020456001 | 강군   | (컴퓨터개론         |
+| 2020123001 | 김영철 | (운영체제           |
+| 2020123002 | 나영희 | (운영체제           |
+| 2020160001 | 강철수 | (운영체제           |
+| 2020160002 | 박철수 | (운영체제           |
+| 2020456001 | 강군   | (운영체제           |
+| 2020123001 | 김영철 | (글쓰기             |
+| 2020160001 | 강철수 | (글쓰기             |
+| 2020160002 | 박철수 | (글쓰기             |
+| 2020456001 | 강군   | (글쓰기             |
+| 2020123001 | 김영철 | (영어               |
+| 2020160001 | 강철수 | (영어               |
+| 2020160002 | 박철수 | (영어               |
++------------+--------+---------------------+
+22 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title, '('  )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(           |
+| 2020123002 | 나영희 | 대학수학(           |
+| 2020160001 | 강철수 | 대학수학(           |
+| 2020160002 | 박철수 | 대학수학(           |
+| 2020456001 | 강군   | 대학수학(           |
+| 2020123001 | 김영철 | 컴퓨터개론(         |
+| 2020123002 | 나영희 | 컴퓨터개론(         |
+| 2020160001 | 강철수 | 컴퓨터개론(         |
+| 2020160002 | 박철수 | 컴퓨터개론(         |
+| 2020456001 | 강군   | 컴퓨터개론(         |
+| 2020123001 | 김영철 | 운영체제(           |
+| 2020123002 | 나영희 | 운영체제(           |
+| 2020160001 | 강철수 | 운영체제(           |
+| 2020160002 | 박철수 | 운영체제(           |
+| 2020456001 | 강군   | 운영체제(           |
+| 2020123001 | 김영철 | 글쓰기(             |
+| 2020160001 | 강철수 | 글쓰기(             |
+| 2020160002 | 박철수 | 글쓰기(             |
+| 2020456001 | 강군   | 글쓰기(             |
+| 2020123001 | 김영철 | 영어(               |
+| 2020160001 | 강철수 | 영어(               |
+| 2020160002 | 박철수 | 영어(               |
++------------+--------+---------------------+
+22 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select * from course;
++--------+------------+-----------+---------+---------+---------------------+
+| co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        |
++--------+------------+-----------+---------+---------+---------------------+
+|      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |
+|      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |
+|      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |
+|      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |
++--------+------------+-----------+---------+---------+---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , c.co_year  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title;
+ERROR 1055 (42000): Expression #3 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'college.c.co_year' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , c.co_year  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, co.co_year;
+ERROR 1054 (42S22): Unknown column 'co.co_year' in 'group statement'
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , c.co_year  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002       |
+| 2020123002 | 나영희 | 대학수학(2002       |
+| 2020160001 | 강철수 | 대학수학(2002       |
+| 2020160002 | 박철수 | 대학수학(2002       |
+| 2020456001 | 강군   | 대학수학(2002       |
+| 2020123001 | 김영철 | 컴퓨터개론(2002     |
+| 2020123002 | 나영희 | 컴퓨터개론(2002     |
+| 2020160001 | 강철수 | 컴퓨터개론(2002     |
+| 2020160002 | 박철수 | 컴퓨터개론(2002     |
+| 2020456001 | 강군   | 컴퓨터개론(2002     |
+| 2020123001 | 김영철 | 운영체제(2002       |
+| 2020123002 | 나영희 | 운영체제(2002       |
+| 2020160001 | 강철수 | 운영체제(2002       |
+| 2020160002 | 박철수 | 운영체제(2002       |
+| 2020456001 | 강군   | 운영체제(2002       |
+| 2020123001 | 김영철 | 글쓰기(2002         |
+| 2020160001 | 강철수 | 글쓰기(2002         |
+| 2020160002 | 박철수 | 글쓰기(2002         |
+| 2020456001 | 강군   | 글쓰기(2002         |
+| 2020123001 | 김영철 | 영어(2002           |
+| 2020160001 | 강철수 | 영어(2002           |
+| 2020160002 | 박철수 | 영어(2002           |
++------------+--------+---------------------+
+22 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year, '_')  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002_      |
+| 2020123002 | 나영희 | 대학수학(2002_      |
+| 2020160001 | 강철수 | 대학수학(2002_      |
+| 2020160002 | 박철수 | 대학수학(2002_      |
+| 2020456001 | 강군   | 대학수학(2002_      |
+| 2020123001 | 김영철 | 컴퓨터개론(2002_    |
+| 2020123002 | 나영희 | 컴퓨터개론(2002_    |
+| 2020160001 | 강철수 | 컴퓨터개론(2002_    |
+| 2020160002 | 박철수 | 컴퓨터개론(2002_    |
+| 2020456001 | 강군   | 컴퓨터개론(2002_    |
+| 2020123001 | 김영철 | 운영체제(2002_      |
+| 2020123002 | 나영희 | 운영체제(2002_      |
+| 2020160001 | 강철수 | 운영체제(2002_      |
+| 2020160002 | 박철수 | 운영체제(2002_      |
+| 2020456001 | 강군   | 운영체제(2002_      |
+| 2020123001 | 김영철 | 글쓰기(2002_        |
+| 2020160001 | 강철수 | 글쓰기(2002_        |
+| 2020160002 | 박철수 | 글쓰기(2002_        |
+| 2020456001 | 강군   | 글쓰기(2002_        |
+| 2020123001 | 김영철 | 영어(2002_          |
+| 2020160001 | 강철수 | 영어(2002_          |
+| 2020160002 | 박철수 | 영어(2002_          |
++------------+--------+---------------------+
+22 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  concat('_',c.co.term ) )  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',c.co.term' at line 7
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  concat('_',c.co.term) ) )  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')  as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num =' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  concat('_',c.co.term ) )  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',c.co.term' at line 7
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )  )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')  as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num =' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' )   )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ',c.co.term' at line 7
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )   )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, ,c.co.term;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')  as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num =' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )   )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')  as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_num =' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )  ) )   )  as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')   )  as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_n' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )  ) )     as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')     as '과목(수강년도_학기)'
+from subject su
+join course c on su.su_nu' at line 2
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,  '_' ) )  )     as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002_      |
+| 2020123002 | 나영희 | 대학수학(2002_      |
+| 2020160001 | 강철수 | 대학수학(2002_      |
+| 2020160002 | 박철수 | 대학수학(2002_      |
+| 2020456001 | 강군   | 대학수학(2002_      |
+| 2020123001 | 김영철 | 컴퓨터개론(2002_    |
+| 2020123002 | 나영희 | 컴퓨터개론(2002_    |
+| 2020160001 | 강철수 | 컴퓨터개론(2002_    |
+| 2020160002 | 박철수 | 컴퓨터개론(2002_    |
+| 2020456001 | 강군   | 컴퓨터개론(2002_    |
+| 2020123001 | 김영철 | 운영체제(2002_      |
+| 2020123002 | 나영희 | 운영체제(2002_      |
+| 2020160001 | 강철수 | 운영체제(2002_      |
+| 2020160002 | 박철수 | 운영체제(2002_      |
+| 2020456001 | 강군   | 운영체제(2002_      |
+| 2020123001 | 김영철 | 글쓰기(2002_        |
+| 2020160001 | 강철수 | 글쓰기(2002_        |
+| 2020160002 | 박철수 | 글쓰기(2002_        |
+| 2020456001 | 강군   | 글쓰기(2002_        |
+| 2020123001 | 김영철 | 영어(2002_          |
+| 2020160001 | 강철수 | 영어(2002_          |
+| 2020160002 | 박철수 | 영어(2002_          |
++------------+--------+---------------------+
+22 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,   concat('_' , c.co_term )            ) ) )     as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, c.co_term;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002_1     |
+| 2020123002 | 나영희 | 대학수학(2002_1     |
+| 2020160001 | 강철수 | 대학수학(2002_1     |
+| 2020160002 | 박철수 | 대학수학(2002_1     |
+| 2020456001 | 강군   | 대학수학(2002_1     |
+| 2020123001 | 김영철 | 대학수학(2002_2     |
+| 2020123002 | 나영희 | 대학수학(2002_2     |
+| 2020160001 | 강철수 | 대학수학(2002_2     |
+| 2020160002 | 박철수 | 대학수학(2002_2     |
+| 2020456001 | 강군   | 대학수학(2002_2     |
+| 2020123001 | 김영철 | 컴퓨터개론(2002_1   |
+| 2020123002 | 나영희 | 컴퓨터개론(2002_1   |
+| 2020160001 | 강철수 | 컴퓨터개론(2002_1   |
+| 2020160002 | 박철수 | 컴퓨터개론(2002_1   |
+| 2020456001 | 강군   | 컴퓨터개론(2002_1   |
+| 2020123001 | 김영철 | 운영체제(2002_1     |
+| 2020123002 | 나영희 | 운영체제(2002_1     |
+| 2020160001 | 강철수 | 운영체제(2002_1     |
+| 2020160002 | 박철수 | 운영체제(2002_1     |
+| 2020456001 | 강군   | 운영체제(2002_1     |
+| 2020123001 | 김영철 | 글쓰기(2002_2       |
+| 2020160001 | 강철수 | 글쓰기(2002_2       |
+| 2020160002 | 박철수 | 글쓰기(2002_2       |
+| 2020456001 | 강군   | 글쓰기(2002_2       |
+| 2020123001 | 김영철 | 영어(2002_2         |
+| 2020160001 | 강철수 | 영어(2002_2         |
+| 2020160002 | 박철수 | 영어(2002_2         |
++------------+--------+---------------------+
+27 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,   concat('_' , concat(c.co_term, ')'  )        ) ) ) )     as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, c.co_term;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002_1)    |
+| 2020123002 | 나영희 | 대학수학(2002_1)    |
+| 2020160001 | 강철수 | 대학수학(2002_1)    |
+| 2020160002 | 박철수 | 대학수학(2002_1)    |
+| 2020456001 | 강군   | 대학수학(2002_1)    |
+| 2020123001 | 김영철 | 대학수학(2002_2)    |
+| 2020123002 | 나영희 | 대학수학(2002_2)    |
+| 2020160001 | 강철수 | 대학수학(2002_2)    |
+| 2020160002 | 박철수 | 대학수학(2002_2)    |
+| 2020456001 | 강군   | 대학수학(2002_2)    |
+| 2020123001 | 김영철 | 컴퓨터개론(2002_1)  |
+| 2020123002 | 나영희 | 컴퓨터개론(2002_1)  |
+| 2020160001 | 강철수 | 컴퓨터개론(2002_1)  |
+| 2020160002 | 박철수 | 컴퓨터개론(2002_1)  |
+| 2020456001 | 강군   | 컴퓨터개론(2002_1)  |
+| 2020123001 | 김영철 | 운영체제(2002_1)    |
+| 2020123002 | 나영희 | 운영체제(2002_1)    |
+| 2020160001 | 강철수 | 운영체제(2002_1)    |
+| 2020160002 | 박철수 | 운영체제(2002_1)    |
+| 2020456001 | 강군   | 운영체제(2002_1)    |
+| 2020123001 | 김영철 | 글쓰기(2002_2)      |
+| 2020160001 | 강철수 | 글쓰기(2002_2)      |
+| 2020160002 | 박철수 | 글쓰기(2002_2)      |
+| 2020456001 | 강군   | 글쓰기(2002_2)      |
+| 2020123001 | 김영철 | 영어(2002_2)        |
+| 2020160001 | 강철수 | 영어(2002_2)        |
+| 2020160002 | 박철수 | 영어(2002_2)        |
++------------+--------+---------------------+
+27 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름',
+    -> concat( su_title,  concat( '(' , concat(c.co_year,   concat('_' , concat(c.co_term, ')'  )  ) ) ) ) as '과목(수강년도_학기)'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> group by s.st_num,s.st_name, su_title, c.co_year, c.co_term;
++------------+--------+---------------------+
+| 학번       | 이름   | 과목(수강년도_학기) |
++------------+--------+---------------------+
+| 2020123001 | 김영철 | 대학수학(2002_1)    |
+| 2020123002 | 나영희 | 대학수학(2002_1)    |
+| 2020160001 | 강철수 | 대학수학(2002_1)    |
+| 2020160002 | 박철수 | 대학수학(2002_1)    |
+| 2020456001 | 강군   | 대학수학(2002_1)    |
+| 2020123001 | 김영철 | 대학수학(2002_2)    |
+| 2020123002 | 나영희 | 대학수학(2002_2)    |
+| 2020160001 | 강철수 | 대학수학(2002_2)    |
+| 2020160002 | 박철수 | 대학수학(2002_2)    |
+| 2020456001 | 강군   | 대학수학(2002_2)    |
+| 2020123001 | 김영철 | 컴퓨터개론(2002_1)  |
+| 2020123002 | 나영희 | 컴퓨터개론(2002_1)  |
+| 2020160001 | 강철수 | 컴퓨터개론(2002_1)  |
+| 2020160002 | 박철수 | 컴퓨터개론(2002_1)  |
+| 2020456001 | 강군   | 컴퓨터개론(2002_1)  |
+| 2020123001 | 김영철 | 운영체제(2002_1)    |
+| 2020123002 | 나영희 | 운영체제(2002_1)    |
+| 2020160001 | 강철수 | 운영체제(2002_1)    |
+| 2020160002 | 박철수 | 운영체제(2002_1)    |
+| 2020456001 | 강군   | 운영체제(2002_1)    |
+| 2020123001 | 김영철 | 글쓰기(2002_2)      |
+| 2020160001 | 강철수 | 글쓰기(2002_2)      |
+| 2020160002 | 박철수 | 글쓰기(2002_2)      |
+| 2020456001 | 강군   | 글쓰기(2002_2)      |
+| 2020123001 | 김영철 | 영어(2002_2)        |
+| 2020160001 | 강철수 | 영어(2002_2)        |
+| 2020160002 | 박철수 | 영어(2002_2)        |
++------------+--------+---------------------+
+27 rows in set (0.00 sec)
+
+mysql> select *
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p';
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+| su_num | su_code | su_title   | su_point | su_time | co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        | at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition | st_num     | st_name | st_term | st_point |
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             | 2020123001 | 김영철  |       2 |        8 |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             | 2020123001 | 김영철  |       2 |        8 |
+|      5 | abc002  | 영어       |        2 |       3 |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             | 2020123001 | 김영철  |       2 |        8 |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             | 2020123002 | 나영희  |       2 |        3 |
+|      1 | msc001  | 대학수학   |        3 |       3 |      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             | 2020160002 | 박철수  |       2 |       12 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             | 2020160002 | 박철수  |       2 |       12 |
+|      3 | com002  | 운영체제   |        3 |       3 |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             | 2020160002 | 박철수  |       2 |       12 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             | 2020160002 | 박철수  |       2 |       12 |
+|      5 | abc002  | 영어       |        2 |       3 |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             | 2020160002 | 박철수  |       2 |       12 |
+|      1 | msc001  | 대학수학   |        3 |       3 |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             | 2020456001 | 강군    |       2 |        8 |
++--------+---------+------------+----------+---------+--------+------------+-----------+---------+---------+---------------------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+------------+---------+---------+----------+
+10 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num;
++------------+
+| 학번       |
++------------+
+| 2020123001 |
+| 2020123002 |
+| 2020160002 |
+| 2020456001 |
++------------+
+4 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름', su.st_st_title '과목'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num, s.st_name, su.st_title;
+ERROR 1054 (42S22): Unknown column 'su.st_st_title' in 'field list'
+mysql> select s.st_num '학번', s.st_name '이름', su.st_title '과목'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num, s.st_name, su.st_title;
+ERROR 1054 (42S22): Unknown column 'su.st_title' in 'field list'
+mysql> select s.st_num '학번', s.st_name '이름', su.su_title '과목'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num, s.st_name, su.su_title;
++------------+--------+------------+
+| 학번       | 이름   | 과목       |
++------------+--------+------------+
+| 2020123001 | 김영철 | 대학수학   |
+| 2020123001 | 김영철 | 운영체제   |
+| 2020123001 | 김영철 | 영어       |
+| 2020123002 | 나영희 | 대학수학   |
+| 2020160002 | 박철수 | 대학수학   |
+| 2020160002 | 박철수 | 컴퓨터개론 |
+| 2020160002 | 박철수 | 운영체제   |
+| 2020160002 | 박철수 | 글쓰기     |
+| 2020160002 | 박철수 | 영어       |
+| 2020456001 | 강군   | 대학수학   |
++------------+--------+------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름', su.su_title '과목' , s.st_point '학점'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num, s.st_name, su.su_title, s.st_point;
++------------+--------+------------+------+
+| 학번       | 이름   | 과목       | 학점 |
++------------+--------+------------+------+
+| 2020123001 | 김영철 | 대학수학   |    8 |
+| 2020123001 | 김영철 | 운영체제   |    8 |
+| 2020123001 | 김영철 | 영어       |    8 |
+| 2020123002 | 나영희 | 대학수학   |    3 |
+| 2020160002 | 박철수 | 대학수학   |   12 |
+| 2020160002 | 박철수 | 컴퓨터개론 |   12 |
+| 2020160002 | 박철수 | 운영체제   |   12 |
+| 2020160002 | 박철수 | 글쓰기     |   12 |
+| 2020160002 | 박철수 | 영어       |   12 |
+| 2020456001 | 강군   | 대학수학   |    8 |
++------------+--------+------------+------+
+10 rows in set (0.00 sec)
+
+mysql> create view pass_view as
+    -> select s.st_num '학번', s.st_name '이름', su.su_title '과목' , s.st_point '학점'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where a.at_pass= 'p'
+    -> group by s.st_num, s.st_name, su.su_title, s.st_point;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from pass_view;
++------------+--------+------------+------+
+| 학번       | 이름   | 과목       | 학점 |
++------------+--------+------------+------+
+| 2020123001 | 김영철 | 대학수학   |    8 |
+| 2020123001 | 김영철 | 운영체제   |    8 |
+| 2020123001 | 김영철 | 영어       |    8 |
+| 2020123002 | 나영희 | 대학수학   |    3 |
+| 2020160002 | 박철수 | 대학수학   |   12 |
+| 2020160002 | 박철수 | 컴퓨터개론 |   12 |
+| 2020160002 | 박철수 | 운영체제   |   12 |
+| 2020160002 | 박철수 | 글쓰기     |   12 |
+| 2020160002 | 박철수 | 영어       |   12 |
+| 2020456001 | 강군   | 대학수학   |    8 |
++------------+--------+------------+------+
+10 rows in set (0.00 sec)
+
+mysql> select p.pr_name, s.st_num, s.st_name, s.st_point from professor p
+    -> join guide g on p.pr_num = g.gu_pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> where p.pr_name = '강길동';
++---------+------------+---------+----------+
+| pr_name | st_num     | st_name | st_point |
++---------+------------+---------+----------+
+| 강길동  | 2020160001 | 강철수  |     NULL |
+| 강길동  | 2020160002 | 박철수  |       12 |
++---------+------------+---------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번',
+    -> s.st_name '이름',
+    -> s.st_point '학점'
+    -> from professor p
+    -> join guide g on p.pr_num = g.gu_pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> where p.pr_name = '강길동';
++------------+--------+------+
+| 학번       | 이름   | 학점 |
++------------+--------+------+
+| 2020160001 | 강철수 | NULL |
+| 2020160002 | 박철수 |   12 |
++------------+--------+------+
+2 rows in set (0.00 sec)
+
+mysql> create view gildong_view as
+    -> select s.st_num '학번',
+    -> s.st_name '이름',
+    -> s.st_point '학점'
+    -> from professor p
+    -> join guide g on p.pr_num = g.gu_pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> where p.pr_name = '강길동';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from gildong_view;
++------------+--------+------+
+| 학번       | 이름   | 학점 |
++------------+--------+------+
+| 2020160001 | 강철수 | NULL |
+| 2020160002 | 박철수 |   12 |
++------------+--------+------+
+2 rows in set (0.00 sec)
+
+mysql> select s.st_num '학번',
+    -> s.st_name '이름',
+    -> s.st_point '학점'
+    -> from professor p
+    -> join guide g on p.pr_num = g.gu_pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> where s.student = '김영철';
+ERROR 1054 (42S22): Unknown column 's.student' in 'where clause'
+mysql> select s.st_num '학번',
+    -> s.st_name '이름',
+    -> s.st_point '학점'
+    -> from professor p
+    -> join guide g on p.pr_num = g.gu_pr_num
+    -> join student s on s.st_num = g.gu_st_num
+    -> where s.st_name = '김영철';
++------------+--------+------+
+| 학번       | 이름   | 학점 |
++------------+--------+------+
+| 2020123001 | 김영철 |    8 |
++------------+--------+------+
+1 row in set (0.00 sec)
+
+mysql> select s.st_num '학번', s.st_name '이름', su.su_title '과목' , s.st_point '학점'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where s.st_name= '김영철'
+    -> group by s.st_num, s.st_name, su.su_title, s.st_point;
++------------+--------+------------+------+
+| 학번       | 이름   | 과목       | 학점 |
++------------+--------+------------+------+
+| 2020123001 | 김영철 | 대학수학   |    8 |
+| 2020123001 | 김영철 | 컴퓨터개론 |    8 |
+| 2020123001 | 김영철 | 운영체제   |    8 |
+| 2020123001 | 김영철 | 글쓰기     |    8 |
+| 2020123001 | 김영철 | 영어       |    8 |
++------------+--------+------------+------+
+5 rows in set (0.00 sec)
+
+mysql> select  su.su_title '과목' , su.su_point '학점'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where s.st_name= '김영철'
+    -> group by  su.su_title, su.su_point;
++------------+------+
+| 과목       | 학점 |
++------------+------+
+| 대학수학   |    3 |
+| 컴퓨터개론 |    2 |
+| 운영체제   |    3 |
+| 글쓰기     |    2 |
+| 영어       |    2 |
++------------+------+
+5 rows in set (0.00 sec)
+
+mysql> select  su.su_title '과목' , su.su_point '학점' , su.su_time '시수'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where s.st_name= '김영철'
+    -> group by  su.su_title, su.su_point, su.su_time;
++------------+------+------+
+| 과목       | 학점 | 시수 |
++------------+------+------+
+| 대학수학   |    3 |    3 |
+| 컴퓨터개론 |    2 |    2 |
+| 운영체제   |    3 |    3 |
+| 글쓰기     |    2 |    2 |
+| 영어       |    2 |    3 |
++------------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> create view kim_view as
+    -> select  su.su_title '과목이름' , su.su_point '학점' , su.su_time '시수'
+    -> from subject su
+    -> join course c on su.su_num = c.co_su_num
+    -> join attend a on c.co_num = a.at_co_num
+    -> join student s on s.st_num = a.at_st_num
+    -> where s.st_name= '김영철'
+    -> group by  su.su_title, su.su_point, su.su_time;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from kim_view;
++------------+------+------+
+| 과목이름   | 학점 | 시수 |
++------------+------+------+
+| 대학수학   |    3 |    3 |
+| 컴퓨터개론 |    2 |    2 |
+| 운영체제   |    3 |    3 |
+| 글쓰기     |    2 |    2 |
+| 영어       |    2 |    3 |
++------------+------+------+
+5 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |     NULL |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from student where st_point = max(st_point);
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select * from student where st_point = min(st_point);
+ERROR 1111 (HY000): Invalid use of group function
+mysql> select min(st_point) from student;
++---------------+
+| min(st_point) |
++---------------+
+|             3 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select max(st_point) from student;
++---------------+
+| max(st_point) |
++---------------+
+|            12 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql>  create table member(
+    ->       id varchar(10),
+    ->       name varchar(10) not null,
+    ->       age int,
+    ->       address varchar(60) not null,
+    ->       primary key(id)
+    ->      );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from course;
++--------+------------+-----------+---------+---------+---------------------+
+| co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        |
++--------+------------+-----------+---------+---------+---------------------+
+|      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |
+|      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |
+|      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |
+|      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |
++--------+------------+-----------+---------+---------+---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |
+|     29 | 2020123001 |         2 |     33 |       12 |         9 |           4 | F        | f       | y             |
+|     30 | 2020123001 |         3 |     22 |       22 |         3 |           9 | F        | f       | y             |
+|     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     32 | 2020123001 |         5 |     33 |       33 |         1 |           1 | F        | f       | y             |
+|     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |
+|     34 | 2020123002 |         1 |     33 |       33 |         3 |           4 | C        | f       | y             |
+|     35 | 2020123002 |         2 |     34 |       34 |         9 |           8 | B        | p       | n             |
+|     36 | 2020123002 |         3 |     12 |       12 |         9 |           9 | F        | f       | y             |
+|     37 | 2020123002 |         4 |     22 |        0 |         1 |           9 | F        | f       | y             |
+|     38 | 2020160001 |         1 |     12 |        1 |         2 |           8 | F        | f       | y             |
+|     39 | 2020160001 |         2 |     12 |        2 |         3 |           8 | F        | f       | y             |
+|     40 | 2020160001 |         3 |     33 |        3 |         4 |           8 | F        | f       | y             |
+|     41 | 2020160001 |         4 |     12 |        4 |         5 |           8 | F        | f       | y             |
+|     42 | 2020160001 |         5 |     12 |        5 |         6 |           8 | F        | f       | y             |
+|     43 | 2020160001 |         6 |     13 |        6 |         9 |           8 | F        | f       | y             |
+|     44 | 2020160002 |         1 |     22 |        9 |         8 |           8 | F        | f       | y             |
+|     45 | 2020160002 |         2 |     33 |       40 |         7 |           9 | B        | p       | n             |
+|     46 | 2020160002 |         3 |     40 |       39 |         6 |           7 | A        | p       | n             |
+|     47 | 2020160002 |         4 |     33 |       38 |         9 |           7 | B        | p       | n             |
+|     48 | 2020160002 |         5 |     35 |       37 |         9 |           5 | B        | p       | n             |
+|     49 | 2020160002 |         6 |     36 |       36 |        10 |           6 | B        | p       | n             |
+|     50 | 2020456001 |         1 |     37 |       35 |        10 |           6 | B        | p       | n             |
+|     51 | 2020456001 |         2 |     25 |       34 |        10 |           6 | C        | f       | n             |
+|     52 | 2020456001 |         3 |     24 |       33 |         9 |           6 | C        | f       | n             |
+|     53 | 2020456001 |         4 |     26 |       20 |         9 |           6 | F        | f       | y             |
+|     54 | 2020456001 |         5 |     29 |       21 |         9 |           7 | F        | f       | y             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select * from
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql>  create table order1(
+    ->       order_num varchar(10),
+    ->       order_customer varchar(10) not null,
+    ->       order_product varchar(20) not null,
+    ->       order_amount int not null,
+    ->       order_date DATE
+    ->       foreign key(order_customer) references member(id)
+    ->       primary key(order_num)
+    ->      );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'foreign key(order_customer) references member(id)
+      primary key(order_num)
+ ' at line 7
+mysql>  create table order1(
+    ->       order_num varchar(10),
+    ->       order_customer varchar(10) not null,
+    ->       order_product varchar(20) not null,
+    ->       order_amount int not null,
+    ->       order_date DATE,
+    ->       foreign key(order_customer) references member(id),
+    ->       primary key(order_num)
+    ->      );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> insert into member values
+    -> ('dragon','박문수',20,'seoul'),
+    -> ('sky','김유신',30,'busan'),
+    -> ('blue','이순신',25,'incheon');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into member order1
+    -> ('o01','sky','cake',1,'2022-04-05'),
+    -> ('o02','blue','croquette',3,'2022-04-10'),
+    -> ('o03','sky','bread',5,'2022-04-22'),
+    -> ('o04','blue','donut',2,'2022-04-30'),
+    -> ('o05','dragon','bread',4,'2022-05-02'),
+    -> ('o06','sky','baguette',2,'2022-05-10'),
+    -> ('o07','dragon','riceburn',7,'2022-05-25');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order1
+('o01','sky','cake',1,'2022-04-05'),
+('o02','blue','croquette',3,'2022-04' at line 1
+mysql> insert into order1 values
+    -> ('o01','sky','cake',1,'2022-04-05'),
+    -> ('o02','blue','croquette',3,'2022-04-10'),
+    -> ('o03','sky','bread',5,'2022-04-22'),
+    -> ('o04','blue','donut',2,'2022-04-30'),
+    -> ('o05','dragon','bread',4,'2022-05-02'),
+    -> ('o06','sky','baguette',2,'2022-05-10'),
+    -> ('o07','dragon','riceburn',7,'2022-05-25');
+Query OK, 7 rows affected (0.01 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select * from member where name = '신';
+Empty set (0.00 sec)
+
+mysql> select * from member where name like '%신%';
++------+--------+------+---------+
+| id   | name   | age  | address |
++------+--------+------+---------+
+| blue | 이순신 |   25 | incheon |
+| sky  | 김유신 |   30 | busan   |
++------+--------+------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select * from member where name like '%신%' order by 1 desc;
++------+--------+------+---------+
+| id   | name   | age  | address |
++------+--------+------+---------+
+| sky  | 김유신 |   30 | busan   |
+| blue | 이순신 |   25 | incheon |
++------+--------+------+---------+
+2 rows in set (0.00 sec)
+
+mysql> select * from member m
+    -> join order o on m.id = o.order_customer
+    -> where m.name = '김유신';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order o on m.id = o.order_customer
+where m.name = '김유신'' at line 2
+mysql> select * from name = '김유신';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= '김유신'' at line 1
+mysql> select * from member where name = '김유신';
++-----+--------+------+---------+
+| id  | name   | age  | address |
++-----+--------+------+---------+
+| sky | 김유신 |   30 | busan   |
++-----+--------+------+---------+
+1 row in set (0.00 sec)
+
+mysql> select * from member m
+    -> join order o on m.id = o.order_customer
+    -> where m.name = '김유신';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order o on m.id = o.order_customer
+where m.name = '김유신'' at line 2
+mysql> select * from member m
+    -> join order o on m.id = o.order_customer;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order o on m.id = o.order_customer' at line 2
+mysql> select * from member m
+    -> join order1 o on m.id = o.order1_customer
+    -> where m.name = '김유신';
+ERROR 1054 (42S22): Unknown column 'o.order1_customer' in 'on clause'
+mysql> select * from member m
+    -> join order1 o on m.id = o.order_customer
+    -> where m.name = '김유신';
++-----+--------+------+---------+-----------+----------------+---------------+--------------+------------+
+| id  | name   | age  | address | order_num | order_customer | order_product | order_amount | order_date |
++-----+--------+------+---------+-----------+----------------+---------------+--------------+------------+
+| sky | 김유신 |   30 | busan   | o01       | sky            | cake          |            1 | 2022-04-05 |
+| sky | 김유신 |   30 | busan   | o03       | sky            | bread         |            5 | 2022-04-22 |
+| sky | 김유신 |   30 | busan   | o06       | sky            | baguette      |            2 | 2022-05-10 |
++-----+--------+------+---------+-----------+----------------+---------------+--------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select o.order_product, o.order_amount from member m
+    -> join order1 o on m.id = o.order_customer
+    -> where m.name = '김유신';
++---------------+--------------+
+| order_product | order_amount |
++---------------+--------------+
+| cake          |            1 |
+| bread         |            5 |
+| baguette      |            2 |
++---------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> select * from order;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order' at line 1
+mysql> select * from order1;
++-----------+----------------+---------------+--------------+------------+
+| order_num | order_customer | order_product | order_amount | order_date |
++-----------+----------------+---------------+--------------+------------+
+| o01       | sky            | cake          |            1 | 2022-04-05 |
+| o02       | blue           | croquette     |            3 | 2022-04-10 |
+| o03       | sky            | bread         |            5 | 2022-04-22 |
+| o04       | blue           | donut         |            2 | 2022-04-30 |
+| o05       | dragon         | bread         |            4 | 2022-05-02 |
+| o06       | sky            | baguette      |            2 | 2022-05-10 |
+| o07       | dragon         | riceburn      |            7 | 2022-05-25 |
++-----------+----------------+---------------+--------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from order1 where order_amonut >= 3;
+ERROR 1054 (42S22): Unknown column 'order_amonut' in 'where clause'
+mysql> select * from order1 where order_amount >= 3;
++-----------+----------------+---------------+--------------+------------+
+| order_num | order_customer | order_product | order_amount | order_date |
++-----------+----------------+---------------+--------------+------------+
+| o02       | blue           | croquette     |            3 | 2022-04-10 |
+| o03       | sky            | bread         |            5 | 2022-04-22 |
+| o05       | dragon         | bread         |            4 | 2022-05-02 |
+| o07       | dragon         | riceburn      |            7 | 2022-05-25 |
++-----------+----------------+---------------+--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select m.id, o.order_product, o.order_amount, o.order_date
+    -> from member m
+    -> join order1 o on m.id = o.order_customer
+    -> where o.order_amount>=3;
++--------+---------------+--------------+------------+
+| id     | order_product | order_amount | order_date |
++--------+---------------+--------------+------------+
+| blue   | croquette     |            3 | 2022-04-10 |
+| dragon | bread         |            4 | 2022-05-02 |
+| dragon | riceburn      |            7 | 2022-05-25 |
+| sky    | bread         |            5 | 2022-04-22 |
++--------+---------------+--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> create view great_order as
+    -> select m.id, o.order_product, o.order_amount, o.order_date
+    -> from member m
+    -> join order1 o on m.id = o.order_customer
+    -> where o.order_amount>=3;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from great_order;
++--------+---------------+--------------+------------+
+| id     | order_product | order_amount | order_date |
++--------+---------------+--------------+------------+
+| blue   | croquette     |            3 | 2022-04-10 |
+| dragon | bread         |            4 | 2022-05-02 |
+| dragon | riceburn      |            7 | 2022-05-25 |
+| sky    | bread         |            5 | 2022-04-22 |
++--------+---------------+--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql>

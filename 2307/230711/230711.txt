@@ -1,0 +1,271 @@
+
+
+
+
+
+
+
+
+과제
+1.학번이 2020으로 시작하는 학생들의
+학번, 이름, 학과를 출력
+select std_num, std_name, std_major from student
+where std_num like '2020%'
+
+
+2. 프로그래밍 일반 과목을 듣는 학생 명단
+학번, 이름, 학과를 출력
+select s.std_num, s.std_name, s.std_major
+from student s
+join attend a on s.std_num = a.at_std_num
+join course c on c.co_code = a.at_co_code
+where c.co_name ='프로그래밍일반';
+
+
+
+
+3. 홍길동 교수가 강의하는 과목을 듣는 학생 명단
+
+학번, 이름, 학과, 수강과목, 담당교수
+select s.std_num, s.std_name, s.std_major, c.co_professor
+from student s
+join attend a on s.std_num = a.at_std_num
+join course c on c.co_code = a.at_co_code
+where c.co_professor = '홍길동';
+
+
+
+4. 전봉준이 획득한 학점(co_point) 합계 => 2학기는 미포함.
+
+select s.std_name, sum(c.co_point) as '총학점'
+from student s
+join attend a on s.std_num = a.at_std_num
+join course c on c.co_code = a.at_co_code
+where a.at_term ='1'
+group by  s.std_name
+having s.std_name = '전봉준';
+
+
+5. 재수강자 점수합계(중간+기말+출석+과제)
+
+select  s.std_num, s.std_name, (a.at_term + a.at_mid + a.at_final + a.at_attend + a.at_hw) as sum,
+s.std_major, c.co_name
+from attend a
+join student s on a.at_std_num=s.std_num
+join course c on a.at_co_code=c.co_code
+where a.at_repetition = 'y';
+
+
+-수강을 하지 않는 친구들 => 휴학생
+insert into student values('2020160003','김순이','컴퓨터공학',1,25);
+insert into student values('2020160004','홍순길','디자인',1,20);
+student 값에 추가하고, 조인 후 수강하고 있지 않은 학생 명단을 출력
+select s.*
+from student s
+left join attend a on at_std_num=std_num
+where a.at_num is null;
+
+
+
+
+
+
+
+
+
+
+
+
+db 생성 college
+mysql user college의 모든 테이블 사용권한 부여
+테이블 생성
+
+/*
+create table attend(
+    -> at_num int auto_increment,
+    -> at_std_num varchar(10),
+    -> at_co_code varchar(10),
+    -> at_year int,
+    -> at_term int,
+    -> at_mid int default 0,
+    -> at_final int default 0,
+    -> at_attend int default 0,
+    -> at_hw int default 0,
+    -> at_repetition varchar(1) default 'n',
+    -> at_score varchar(4),
+    -> primary key(at_num),
+    -> foreign key(at_std_num) references student(std_num),
+    -> foreign key(at_co_code) references course(co_code)
+    -> );
+*/
+create table student(
+     st_num int not null ,
+     st_name varchar(20) not null,
+     st_term int not null,
+     st_point int not null,
+     primary key(st_num)
+     );
+
+create table professor(
+     pr_num int not null,
+     pr_name varchar(20) not null,
+     pr_age int not null,
+     pr_room varchar(45) not null,
+	pr_state varchar(45)  not null default '재직',
+	pr_position varchar(45)  not null default '조교수' ,
+     primary key(pr_num)
+     );
+
+create table subject(
+     su_num int not null auto_increment,
+     su_code varchar(20) not null,
+     su_title  varchar(45) not null,
+     su_point int not null default 0,
+     su_time int  not null default 0,
+     primary key(su_num )
+     );
+
+create table guide(
+     gu_num int not null auto_increment,
+     gu_pr_num int not null,
+     gu_st_num int not null,
+     gu_year varchar(45) default null,
+  foreign key(gu_st_num) references student(st_num),
+    foreign key(gu_pr_num) references professor(pr_num),
+primary key(gu_num )
+     );
+
+
+create table course(
+     co_num int not null auto_increment,
+     co_pr_num int not null,
+     co_su_num int not null,
+     co_term varchar(10) not null default 1,
+     co_year int not null,
+     co_timetable varchar(100) not null, 
+  foreign key(co_pr_num) references professor(pr_num),
+    foreign key(co_su_num) references subject(su_num),
+primary key(co_num )
+     );
+
+create table attend(
+     at_num int not null auto_increment,
+     at_st_num int not null,
+     at_co_num int not null,
+     at_mid int not null default 0,
+     at_final int not null default 0,
+     at_attend  int not null default 0,
+     at_homework  int not null default 0,
+     at_score varchar(45) default null,
+     at_pass  varchar(1) default 'n',
+     at_repetition varchar(1) default 'n',
+     primary key(at_num),
+    foreign key(at_st_num) references student(st_num),
+    foreign key(at_co_num ) references course(co_num)
+     );
+
+
+
+
+김영철이 수강하는 과목명을 출력
+select  *
+from student s
+join attend a on s.st_num = a.at_st_num
+join course c on a.at_co_num=c.co_num
+join subject su on su.su_num = c.co_su_num
+where s.st_name = '김영철';
+
+썜버전
+select std.st_name, s.su_title from student std
+join attend a on a.at_st_num = std.st_num
+join course c on c.co_num = a.at_co_num
+join subject s on s.su_num = c.co_su_num
+where st_name = '김영철';
+
+강길동 교수가 지도하는 학생명 출력
+select std.st_name as '강길동교수 지도 학생'
+from guide g
+join student std on std.st_num = g.gu_st_num
+join professor p on p.pr_num = g.gu_pr_num
+where p.pr_name = '강길동';
+
+
+3.대학수학 과목을 수강하는 수강자 명단 출력
+select st_name as '대학수학 수강자'
+from student std
+join attend a on a.at_st_num = std.st_num
+join course c on c.co_num = a.at_co_num
+join subject s on s.su_num = c.co_su_num
+where s.su_title = '대학수학';
+
+
+
+숙제
+1. at_mid at_final at attend at_hw 값 업데이트
+40,40,10,10 으로 반영하기(툴로 완료) mysql워크밴치
+
+2. 합계 값을 이용하여 at_score 업데이트
+at_mid+at_final+at_attend+at_hw >=90 A/ >=80 B/ >=70 C / >=60 D / F
+ 
+UPDATE attend 
+     SET at_score = CASE
+WHEN at_mid+at_final+at_attend+at_homework  >= 90 THEN 'A'
+WHEN at_mid+at_final+at_attend+at_homework  >= 80 THEN 'B'
+WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'C'
+WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'D'
+         ELSE 'F'
+     END
+;
+
+3. at_pass 값 업데이트 (p/f) : at_score가 A 또는 B 이면 p(pass) 아니면 f(fail)
+UPDATE attend 
+     SET at_pass = CASE
+WHEN at_score  = 'A' THEN 'p'
+WHEN at_score  = 'B' THEN 'f'
+         ELSE 'f'
+     END
+;
+
+
+4. at_pass 기본값 속성을 f로 변경 alter의 디폴트를 f로 하기
+
+alter table  attend modify at_pass varchar(1) default 'f';
+
+5. at_repetition 값 업데이트 (y/n)
+at_score가 F이거나, at_attend 가 3이하인 자료는 y 아니면 n
+UPDATE attend 
+     SET at_repetition = CASE
+WHEN at_score = 'F' THEN 'y'
+WHEN at_attend  <= 3 THEN 'y'
+         ELSE 'n'
+     END
+;
+
+
+
+
+김영철이 수강하는 과목명을 출력
+
+select s.su_title from subject s 
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student st on st.st_num =  a.at_st_num
+where st.st_name = '김영철';
+
+강길동 교수가 지도하는 학생명 출력
+
+select st.st_name from student st
+join guide g on st.st_num = g.gu_st_num
+join professor p on g.gu_pr_num = p.pr_num
+where p.pr_name = '강길동';
+
+
+
+대학수학 과목을 수강하는 수강자 명단 출력
+
+select st.st_name
+from subject s 
+join course c on s.su_num = c.co_su_num
+join attend a on a.at_co_num = c.co_num
+join student st on st.st_num =  a.at_st_num
+where s.su_title = '대학수학';

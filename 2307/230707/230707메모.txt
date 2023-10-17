@@ -1,0 +1,160 @@
+
+전체  product를 조회
+- 할인상품(price >= 16000)인 제품은
+  피트니스상의(할인상품) 표시
+폴라 티셔츠
+피트니스상의(할인상품)
+
+-김O동
+
+select concat(name, ' 할인상품') from product where price >= 16000;
+
+select  if(price>16000, concat(name, 123), name)  from product;
+
+
+select num , type_a, type_b,
+if(price>16000, concat(name, '(할인상품)'), name) as name 
+, price, amount, sale_amount, register_date, name  from product;
+
+select replace(customer,MID(customer, 2, 1),'O') from buy;
+
+select insert(customer,2,1,'O') as 'customer',
+product_name, price, amount, buy_date, total
+from buy;
+
+
+작업
+- select -> insert -> select -> delete -> 완성
+
+- 트랜젝션(transaction)
+- 하나의 작업을 하기위한 명령어 묶음 단위
+- 하나의 트랜젝션에서 실행하는 모든 명령어가 완료되어야
+전체가 완료되는 형태
+- 만약 하나라도 작업이 취소되면 모두 취소
+- 모든 작업이 완료되어야 완료
+- 나중에 완료를 결정하는 개념
+- 임시 실행 개념
+
+start transaction;
+명령1
+명령2
+명령3
+...
+rollback; => 취소
+commit; => 완료
+
+-------------------------------------
+product table에서 작업
+- 1. 월별 판매개수의 합계
+date_format(값, '%y-%m')
+select * from product where date_format('22-10','%y-%m');
+ select * from product WHERE DATE_FORMAT(register_date, '%Y-%m') = '2022-10';
+select DATE_FORMAT(register_date, '%Y-%m') as '월별', sum(amount) from product group by DATE_FORMAT(register_date, '%Y-%m');
+select month(register_date) as "월" ,sum(sale_amount)as "판매량" from product group by month(register_date);
+- 2. 년~월 형태로 표시 => 1번 변형
+select DATE_FORMAT(register_date, '%Y-%m') as '월별', sum(amount) from product group by DATE_FORMAT(register_date, '%Y-%m');
+- 3. type_a 별로 판매개수 합계
+select type_a, sum(amount) from product group by type_a;
+- 4. type_a 별 합계가 가장 큰 값 출력 =>3번 변형 
+select type_a, sum(amount) from product group by type_a order by sum(amount) DESC limit 1;
+
+
+select max(sum) from
+(select sum(sale_amount) as sum from
+product group by type_a) as p;
+
+select max(p.sum) from(select sum(sale_amount) as sum from product group by type_a) as p;
+
+sum(필드)
+max(테이블X)
+
+
+
+
+
+
+
+
+
+
+
+
+school database 생성 => root  워크벤치사용예정
+
+
+
+use school;
+create table student(
+std_num varchar(10) ,
+std_name varchar(20) not null,
+std_major varchar(20),
+std_term int,
+std_point int,
+primary key(std_num)
+);
+
+학생(student)1
+학번(std_num) : 문자(10), 기본키pk1
+이름(std_name) : 문자(20),nn1
+학과(std_major) : 문자(20)1
+학기(std_term) : 숫자
+이수학점(std_point) : 숫자
+
+
+create table course(
+co_code varchar(10) ,
+co_name varchar(20) not null,
+co_professor varchar(20),
+co_point int default 3,
+co_time int,
+co_timetable varchar(40),
+primary key(co_code)
+);
+과목(course)1
+과목코드(co_code) : 문자(10), 기본키pk1
+과목명(co_name):문자(20), nn1
+담당교수(co_professor):문자(20)1
+학점(co_point):숫자, default 3  1
+시간(co_time):숫자 1
+시간표(co_timetable) : 문자(40)
+
+
+
+create table attend(
+at_num int auto_increment, 
+at_std_num varchar(10),
+at_co_code varchar(10),
+at_year int,
+at_term int,
+at_mid int default 0,
+at_final int default 0,
+at_attend int default 0,
+at_hw int default 0,
+at_repetition varchar(1) default 'n',
+at_score varchar(4),
+primary key(at_num),
+foreign key(at_std_num) references student(std_num),
+foreign key(at_co_code) references course(co_code)
+);
+수강(attend) 1
+수강번호(at_num):숫자, 자동증가pk 1
+학번(at_std_num) : 문자(10) 1
+과목코드 (at_co_code) : 문자(10) 1
+수강연도(at_year):숫자 1
+수강학기(at_term):숫자 1
+중간(at_mid):숫자, default 0    1
+기말(at_final):숫자, default 0   1
+출석(at_attend): 숫자, default 0    1
+과제(at_hw):숫자, default 0    1
+재수강 여부(at_repetition): 문자1 default n
+학점(at_score) : 문자(4) 
+
+foreign key(열명칭) references 참조테이블명칭(열명칭),
+foreign key(열명칭) references 참조테이블명칭(열명칭)
+
+
+
+
+
+
+ 

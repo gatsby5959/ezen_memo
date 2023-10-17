@@ -1,0 +1,49 @@
+1. workspace 생성
+2. eclipse 열기
+
+3. 프로젝트 생성 => Dynamic Web Project 
+4. window -> encoding, jdk 설치, complier, server 설치, web브라우저설정
+5. 내 프로젝트의 -> jdk, complier, server 설정
+6. 서버 올리기 -> 서버 설정 변경
+
+
+---프로젝트 생성 후 기본 설정
+
+1. 라이브러리 파일 복->붙
+
+(xml파일은 서버가 가장 먼저 올리?는 파일)
+2. xml(설정)파일 생성 : web.xml, log4j2.xml,
+ mybatisConfig.xml(controller 생성후) 
+WEB_INF : 설정파일경로
+3.index.jsp 생성 -> 서버 올려서 확인
+
+---기본환경 설정.
+1. servlet의 패키지구조 생성
+-controller
+-domain -vo
+-service
+-repository -dao
+-orm
+-mapper
+
+webapp의 폴더구조 생성
+-board : register.jsp list.jsp detail.jsp modify.jsp
+-member
+-resources - 이미지, css, js 각각 폴더보관
+(webapp -> board(폴더))
+
+2. db의 설정대로 VO생성
+
+3. controller -> servlet 생성
+controller -> service -> dao -> db
+
+
+4. 기본 객체 생성과 연결
+
+5. controller
+	경로 switch 구문 설정
+	rdp 설정
+-----------기본 베이스 구축
+
+
+jsp 요청 -> controller 요청 받기(parameter) -> service -> dao -> mapper  -> jsp응답확인

@@ -1,0 +1,739 @@
+Microsoft Windows [Version 10.0.19045.3086]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> desc db
+    -> ;
+ERROR 1046 (3D000): No database selected
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| ezentest           |
+| information_schema |
+| performance_schema |
++--------------------+
+3 rows in set (0.01 sec)
+
+mysql> use ezentest;
+Database changed
+mysql> show tables;
++--------------------+
+| Tables_in_ezentest |
++--------------------+
+| test1              |
+| test2              |
++--------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from tset1;
+ERROR 1146 (42S02): Table 'ezentest.tset1' doesn't exist
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   30 | 서울특별시 |
+|  2 | 강감찬 |   25 | 인천광역시 |
+|  3 | 강기순 |   25 | 인천광역시 |
+|  4 | 고길동 |   30 | 서울특별시 |
+|  5 | 스미스 |   40 | 부산광역시 |
++----+--------+------+------------+
+5 rows in set (0.01 sec)
+
+mysql> select * from test1 where address = '서울특별시';
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   30 | 서울특별시 |
+|  4 | 고길동 |   30 | 서울특별시 |
++----+--------+------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from test1 where address = '서울특별시' order by age;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   30 | 서울특별시 |
+|  4 | 고길동 |   30 | 서울특별시 |
++----+--------+------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from test1 where address = '서울특별시' order by age desc;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   30 | 서울특별시 |
+|  4 | 고길동 |   30 | 서울특별시 |
++----+--------+------+------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from test1 where address = '서울특별시' order by age desc;^C
+mysql> ^C
+mysql> select * from test1 where address = '서울특별시' order by age desc;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   30 | 서울특별시 |
+|  4 | 고길동 |   30 | 서울특별시 |
++----+--------+------+------------+
+2 rows in set (0.00 sec)
+
+mysql> update test1
+    -> set age = 20
+    -> where id = 1;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   20 | 서울특별시 |
+|  2 | 강감찬 |   25 | 인천광역시 |
+|  3 | 강기순 |   25 | 인천광역시 |
+|  4 | 고길동 |   30 | 서울특별시 |
+|  5 | 스미스 |   40 | 부산광역시 |
++----+--------+------+------------+
+5 rows in set (0.00 sec)
+
+mysql> update test1
+    -> set age = 20
+    -> where name = '강기순';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   20 | 서울특별시 |
+|  2 | 강감찬 |   25 | 인천광역시 |
+|  3 | 강기순 |   20 | 인천광역시 |
+|  4 | 고길동 |   30 | 서울특별시 |
+|  5 | 스미스 |   40 | 부산광역시 |
++----+--------+------+------------+
+5 rows in set (0.00 sec)
+
+mysql> update test1
+    -> set age = age+1;
+Query OK, 5 rows affected (0.01 sec)
+Rows matched: 5  Changed: 5  Warnings: 0
+
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   21 | 서울특별시 |
+|  2 | 강감찬 |   26 | 인천광역시 |
+|  3 | 강기순 |   21 | 인천광역시 |
+|  4 | 고길동 |   31 | 서울특별시 |
+|  5 | 스미스 |   41 | 부산광역시 |
++----+--------+------+------------+
+5 rows in set (0.00 sec)
+
+mysql> delete from test1 where age = 26;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   21 | 서울특별시 |
+|  3 | 강기순 |   21 | 인천광역시 |
+|  4 | 고길동 |   31 | 서울특별시 |
+|  5 | 스미스 |   41 | 부산광역시 |
++----+--------+------+------------+
+4 rows in set (0.00 sec)
+
+mysql> create table student(
+    -> num int not null,
+    -> name varchar(30) not null,
+    -> age varchar(20) default 20,
+    -> address varchar(45),
+    -> major varchar(45),
+    -> score int
+    -> primary key(num));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(num))' at line 8
+mysql> create table student(
+    -> num int not null,
+    -> name varchar(30) not null,
+    -> age varchar(20) default 20,
+    -> address varchar(45),
+    -> major varchar(45),
+    -> score int,
+    -> primary key(num));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> select * from student;
+Empty set (0.00 sec)
+
+mysql> insert into student values
+    -> (1111,'홍길동',23,'Seoul','Computer',89),
+    -> (2222,'강길순',24,'Seoul','English',87),
+    -> (3333,'이순신',22,'incheon','Computer',57),
+    -> (4444,'강감찬',23,'Incheon','English',67),
+    -> (5555,'강감찬',21,'suwon','Computer',97);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from test1;
++----+--------+------+------------+
+| id | name   | age  | address    |
++----+--------+------+------------+
+|  1 | 홍길동 |   21 | 서울특별시 |
+|  3 | 강기순 |   21 | 인천광역시 |
+|  4 | 고길동 |   31 | 서울특별시 |
+|  5 | 스미스 |   41 | 부산광역시 |
++----+--------+------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from student;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 4444 | 강감찬 | 23   | Incheon | English  |    67 |
+| 5555 | 강감찬 | 21   | suwon   | Computer |    97 |
++------+--------+------+---------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> select * from major = 'Computer';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= 'Computer'' at line 1
+mysql> select * from student where major = 'Computer';
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 5555 | 강감찬 | 21   | suwon   | Computer |    97 |
++------+--------+------+---------+----------+-------+
+3 rows in set (0.00 sec)
+
+mysql> ^C
+mysql> ^C
+mysql>
+mysql> select * from student where major = 'Computer';
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 5555 | 강감찬 | 21   | suwon   | Computer |    97 |
++------+--------+------+---------+----------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select * from student where major = 'Computer' and score >= 90;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 5555 | 강감찬 | 21   | suwon   | Computer |    97 |
++------+--------+------+---------+----------+-------+
+1 row in set (0.00 sec)
+
+mysql> select * from student where score between 70 and 90;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
++------+--------+------+---------+----------+-------+
+2 rows in set (0.00 sec)
+
+mysql> select * from where address = 'seoul' or address = 'incheon';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'where address = 'seoul' or address = 'incheon'' at line 1
+mysql> select * from student where address = 'seoul' or address = 'incheon';
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 4444 | 강감찬 | 23   | Incheon | English  |    67 |
++------+--------+------+---------+----------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select name,major from student where major = 'Computer' and score >= 90;
++--------+----------+
+| name   | major    |
++--------+----------+
+| 강감찬 | Computer |
++--------+----------+
+1 row in set (0.00 sec)
+
+mysql> select name as 이름 ,major from student where major = 'Computer' and score >= 90;
++--------+----------+
+| 이름   | major    |
++--------+----------+
+| 강감찬 | Computer |
++--------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from student where address in ('seoul' , 'incheon');
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 4444 | 강감찬 | 23   | Incheon | English  |    67 |
++------+--------+------+---------+----------+-------+
+4 rows in set (0.00 sec)
+
+mysql> update student set major = 'computer' where name = '강감찬';
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from student;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 4444 | 강감찬 | 23   | Incheon | computer |    67 |
+| 5555 | 강감찬 | 21   | suwon   | computer |    97 |
++------+--------+------+---------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> update student set name = '유관순' where num = 5555;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from student1;
+ERROR 1146 (42S02): Table 'ezentest.student1' doesn't exist
+mysql> select * from student;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 4444 | 강감찬 | 23   | Incheon | computer |    67 |
+| 5555 | 유관순 | 21   | suwon   | computer |    97 |
++------+--------+------+---------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> delete from student where name = '강감찬';
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from student;
++------+--------+------+---------+----------+-------+
+| num  | name   | age  | address | major    | score |
++------+--------+------+---------+----------+-------+
+| 1111 | 홍길동 | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순 | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신 | 22   | incheon | Computer |    57 |
+| 5555 | 유관순 | 21   | suwon   | computer |    97 |
++------+--------+------+---------+----------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select distinct major from student;
++----------+
+| major    |
++----------+
+| Computer |
+| English  |
++----------+
+2 rows in set (0.00 sec)
+
+mysql> ^C
+mysql> select distinct adress from student;
+ERROR 1054 (42S22): Unknown column 'adress' in 'field list'
+mysql> select distinct address from student;
++---------+
+| address |
++---------+
+| Seoul   |
+| incheon |
+| suwon   |
++---------+
+3 rows in set (0.00 sec)
+
+mysql> insert into student(num, name, age, address, major, score)
+    -> values(6666,'hong',23,'suwon','korea',89);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into student(num, name, age, address, major, score)
+    -> values(7777,'gilsung',24,'seoul','english',87);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into student(num, name, age, address, major, score)
+    -> values(8888,'leesunsin',22,'korea','computer',57);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into student(num, name, age, address, major, score)
+    -> values(9999,'kaung',23,'incheon','english',67);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into student(num, name, age, address, major, score)
+    -> values(0001,'sunny',21,'suwon','korea',97);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+
+| num  | name      | age  | address | major    | score |
++------+-----------+------+---------+----------+-------+
+|    1 | sunny     | 21   | suwon   | korea    |    97 |
+| 1111 | 홍길동    | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순    | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신    | 22   | incheon | Computer |    57 |
+| 5555 | 유관순    | 21   | suwon   | computer |    97 |
+| 6666 | hong      | 23   | suwon   | korea    |    89 |
+| 7777 | gilsung   | 24   | seoul   | english  |    87 |
+| 8888 | leesunsin | 22   | korea   | computer |    57 |
+| 9999 | kaung     | 23   | incheon | english  |    67 |
++------+-----------+------+---------+----------+-------+
+9 rows in set (0.00 sec)
+
+mysql> select count(num) from student;
++------------+
+| count(num) |
++------------+
+|          9 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select count(num) as 인원수 from student;
++--------+
+| 인원수 |
++--------+
+|      9 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select count(*) as 인원수 from student;
++--------+
+| 인원수 |
++--------+
+|      9 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select count(num) as 인원수 from student;
++--------+
+| 인원수 |
++--------+
+|      9 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> select sum(score) from student;
++------------+
+| sum(score) |
++------------+
+|        727 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select avg(score) from student;
++------------+
+| avg(score) |
++------------+
+|    80.7778 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select max(score) from student;
++------------+
+| max(score) |
++------------+
+|         97 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select min(score) from student;
++------------+
+| min(score) |
++------------+
+|         57 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select sum(score) from student where major = 'computer' group by major;
++------------+
+| sum(score) |
++------------+
+|        300 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+
+| num  | name      | age  | address | major    | score |
++------+-----------+------+---------+----------+-------+
+|    1 | sunny     | 21   | suwon   | korea    |    97 |
+| 1111 | 홍길동    | 23   | Seoul   | Computer |    89 |
+| 2222 | 강길순    | 24   | Seoul   | English  |    87 |
+| 3333 | 이순신    | 22   | incheon | Computer |    57 |
+| 5555 | 유관순    | 21   | suwon   | computer |    97 |
+| 6666 | hong      | 23   | suwon   | korea    |    89 |
+| 7777 | gilsung   | 24   | seoul   | english  |    87 |
+| 8888 | leesunsin | 22   | korea   | computer |    57 |
+| 9999 | kaung     | 23   | incheon | english  |    67 |
++------+-----------+------+---------+----------+-------+
+9 rows in set (0.00 sec)
+
+mysql> select sum(score) from student where major = 'computer';
++------------+
+| sum(score) |
++------------+
+|        300 |
++------------+
+1 row in set (0.00 sec)
+
+mysql>  select major, sum(score) from student group by major;
++----------+------------+
+| major    | sum(score) |
++----------+------------+
+| korea    |        186 |
+| Computer |        300 |
+| English  |        241 |
++----------+------------+
+3 rows in set (0.00 sec)
+
+mysql>  select major, count(num) from student group by major;
++----------+------------+
+| major    | count(num) |
++----------+------------+
+| korea    |          2 |
+| Computer |          4 |
+| English  |          3 |
++----------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select major as '전공', count(num) as 인원수 from student group by major = 'computer';
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ezentest.student.major' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select major as '전공', count(num) as '인원수' from student group by major = 'computer';
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ezentest.student.major' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> select major as '전공', count(num) as '인원수' from student group by major;
++----------+--------+
+| 전공     | 인원수 |
++----------+--------+
+| korea    |      2 |
+| Computer |      4 |
+| English  |      3 |
++----------+--------+
+3 rows in set (0.00 sec)
+
+mysql> select major as '전공', count(num) as '인원수' from student group by major having  major ='computer';
++----------+--------+
+| 전공     | 인원수 |
++----------+--------+
+| Computer |      4 |
++----------+--------+
+1 row in set (0.00 sec)
+
+mysql> alter table student add grade int default 0;
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+-------+
+| num  | name      | age  | address | major    | score | grade |
++------+-----------+------+---------+----------+-------+-------+
+|    1 | sunny     | 21   | suwon   | korea    |    97 |     0 |
+| 1111 | 홍길동    | 23   | Seoul   | Computer |    89 |     0 |
+| 2222 | 강길순    | 24   | Seoul   | English  |    87 |     0 |
+| 3333 | 이순신    | 22   | incheon | Computer |    57 |     0 |
+| 5555 | 유관순    | 21   | suwon   | computer |    97 |     0 |
+| 6666 | hong      | 23   | suwon   | korea    |    89 |     0 |
+| 7777 | gilsung   | 24   | seoul   | english  |    87 |     0 |
+| 8888 | leesunsin | 22   | korea   | computer |    57 |     0 |
+| 9999 | kaung     | 23   | incheon | english  |    67 |     0 |
++------+-----------+------+---------+----------+-------+-------+
+9 rows in set (0.00 sec)
+
+mysql> update student set grade = 1 where age = 21;
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> update student set grade = 2 where age = 22;
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> update student set grade = 3 where age = 23;
+Query OK, 3 rows affected (0.00 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> update student set grade = 4 where age = 24;
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+-------+
+| num  | name      | age  | address | major    | score | grade |
++------+-----------+------+---------+----------+-------+-------+
+|    1 | sunny     | 21   | suwon   | korea    |    97 |     1 |
+| 1111 | 홍길동    | 23   | Seoul   | Computer |    89 |     3 |
+| 2222 | 강길순    | 24   | Seoul   | English  |    87 |     4 |
+| 3333 | 이순신    | 22   | incheon | Computer |    57 |     2 |
+| 5555 | 유관순    | 21   | suwon   | computer |    97 |     1 |
+| 6666 | hong      | 23   | suwon   | korea    |    89 |     3 |
+| 7777 | gilsung   | 24   | seoul   | english  |    87 |     4 |
+| 8888 | leesunsin | 22   | korea   | computer |    57 |     2 |
+| 9999 | kaung     | 23   | incheon | english  |    67 |     3 |
++------+-----------+------+---------+----------+-------+-------+
+9 rows in set (0.00 sec)
+
+mysql> update student set grade = (
+    -> case
+    -> when age=21 then 1
+    -> when age=22 then 2
+    -> when age=23 then 3
+    -> when age=24 then 4
+    -> end);
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 9  Changed: 0  Warnings: 0
+
+mysql> create table if not exists student_4 like student;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> show tables;
++--------------------+
+| Tables_in_ezentest |
++--------------------+
+| student            |
+| student_4          |
+| test1              |
+| test2              |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> desc student_4
+    -> ;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| num     | int         | NO   | PRI | NULL    |       |
+| name    | varchar(30) | NO   |     | NULL    |       |
+| age     | varchar(20) | YES  |     | 20      |       |
+| address | varchar(45) | YES  |     | NULL    |       |
+| major   | varchar(45) | YES  |     | NULL    |       |
+| score   | int         | YES  |     | NULL    |       |
+| grade   | int         | YES  |     | 0       |       |
++---------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> insert into student_4(num, name, age, address, major, score, grade)
+    -> select * from student where grade = 4;
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select * from student where grade = 4;
++------+---------+------+---------+---------+-------+-------+
+| num  | name    | age  | address | major   | score | grade |
++------+---------+------+---------+---------+-------+-------+
+| 2222 | 강길순  | 24   | Seoul   | English |    87 |     4 |
+| 7777 | gilsung | 24   | seoul   | english |    87 |     4 |
++------+---------+------+---------+---------+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> delete from student where grade = 4;
+Query OK, 2 rows affected (0.00 sec)
+
+mysql> select * from student where grade = 4;
+Empty set (0.00 sec)
+
+mysql> update student set grade = grade+1
+    -> ;
+Query OK, 7 rows affected (0.00 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+-------+
+| num  | name      | age  | address | major    | score | grade |
++------+-----------+------+---------+----------+-------+-------+
+|    1 | sunny     | 21   | suwon   | korea    |    97 |     2 |
+| 1111 | 홍길동    | 23   | Seoul   | Computer |    89 |     4 |
+| 3333 | 이순신    | 22   | incheon | Computer |    57 |     3 |
+| 5555 | 유관순    | 21   | suwon   | computer |    97 |     2 |
+| 6666 | hong      | 23   | suwon   | korea    |    89 |     4 |
+| 8888 | leesunsin | 22   | korea   | computer |    57 |     3 |
+| 9999 | kaung     | 23   | incheon | english  |    67 |     4 |
++------+-----------+------+---------+----------+-------+-------+
+7 rows in set (0.00 sec)
+
+mysql> update student set age = age+1;
+Query OK, 7 rows affected (0.00 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+
+mysql> select * from student;
++------+-----------+------+---------+----------+-------+-------+
+| num  | name      | age  | address | major    | score | grade |
++------+-----------+------+---------+----------+-------+-------+
+|    1 | sunny     | 22   | suwon   | korea    |    97 |     2 |
+| 1111 | 홍길동    | 24   | Seoul   | Computer |    89 |     4 |
+| 3333 | 이순신    | 23   | incheon | Computer |    57 |     3 |
+| 5555 | 유관순    | 22   | suwon   | computer |    97 |     2 |
+| 6666 | hong      | 24   | suwon   | korea    |    89 |     4 |
+| 8888 | leesunsin | 23   | korea   | computer |    57 |     3 |
+| 9999 | kaung     | 24   | incheon | english  |    67 |     4 |
++------+-----------+------+---------+----------+-------+-------+
+7 rows in set (0.00 sec)
+
+mysql> create table test3(
+    -> num int not null,
+    -> name varchar(10) not null,
+    -> dep varchar(20) ,
+    -> addr varchar(20),
+    -> tel varchar(5),
+    -> score int,
+    -> primary key(num));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into test3 values(100, '홍길동', '경영학과','원주시','111',78);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into test3 values(200, '김길동', '경영학과','서울시','123',89)
+    -> values(300,'이길동','컴퓨터','원주시','456',68)
+    -> values(400,'박길동','컴퓨터','수원시','222',97)
+    -> values(500,'고길동','경영학과','서울시','333',62)
+    -> values(600,'구길동','컴퓨터','인천시','789',93);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'values(300,'이길동','컴퓨터','원주시','456',68)
+values(400,'박길동',' at line 2
+mysql> insert into test3 values(200, '김길동', '경영학과','서울시','123',89),
+    -> values(300,'이길동','컴퓨터','원주시','456',68),
+    -> values(400,'박길동','컴퓨터','수원시','222',97),
+    -> values(500,'고길동','경영학과','서울시','333',62),
+    -> values(600,'구길동','컴퓨터','인천시','789',93);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'values(300,'이길동','컴퓨터','원주시','456',68),
+values(400,'박길동'' at line 2
+mysql> insert into test3 values(200, '김길동', '경영학과','서울시','123',89),
+    -> (300,'이길동','컴퓨터','원주시','456',68),
+    -> (400,'박길동','컴퓨터','수원시','222',97),
+    -> (500,'고길동','경영학과','서울시','333',62),
+    -> (600,'구길동','컴퓨터','인천시','789',93);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from test3
+    -> ;
++-----+--------+----------+--------+------+-------+
+| num | name   | dep      | addr   | tel  | score |
++-----+--------+----------+--------+------+-------+
+| 100 | 홍길동 | 경영학과 | 원주시 | 111  |    78 |
+| 200 | 김길동 | 경영학과 | 서울시 | 123  |    89 |
+| 300 | 이길동 | 컴퓨터   | 원주시 | 456  |    68 |
+| 400 | 박길동 | 컴퓨터   | 수원시 | 222  |    97 |
+| 500 | 고길동 | 경영학과 | 서울시 | 333  |    62 |
+| 600 | 구길동 | 컴퓨터   | 인천시 | 789  |    93 |
++-----+--------+----------+--------+------+-------+
+6 rows in set (0.00 sec)
+
+mysql>

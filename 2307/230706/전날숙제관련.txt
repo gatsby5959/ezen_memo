@@ -1,0 +1,23 @@
+create table test3(
+num int not null,
+name varchar(10) no null,
+dep varchar(20),
+addr varchar(20),
+tel varchar(5),
+score int,
+primary key(num));
+
+
+insert into test3 values(100, '홍길동','경영학과',''원주시,'111',78);
+insert into test3 values(200, '김길동','경영학과',''서울시,'456',89);
+insert into test3 values(300, '이길동','컴퓨터',''원주시,'222',68);
+insert into test3 values(400, '박길동','컴퓨터',''원주시,'222',68);
+insert into test3 values(500, '고길동','경영학과',''원주시,'333',78);
+insert into test3 values(600, '구길동','컴퓨터',''인천시,'789',78);
+
+
+alter table test3 add age int default 20 after name;
+
+update test3 set age = 20;
+
+ select dep ,count(num) from test3 group by dep;

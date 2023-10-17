@@ -1,0 +1,16 @@
+member table 생성
+create table member(
+id varchar(100) not null,
+pw varchar(100) not null,
+name varchar(100),
+email varchar(100),
+home varchar(100),
+age int,
+reg_date datetime default now(),
+primary key(id));
+
+
+
+1. Spring Security Core  5.5.3
+2. Spring Security Web
+3. Spring Security Config

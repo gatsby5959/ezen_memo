@@ -1,0 +1,1104 @@
+Microsoft Windows [Version 10.0.19045.3086]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'mysqluser'@'localhost' (using password: YES)
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 9
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use school
+Database changed
+mysql> select s.std_name, sum(c.co_point) as '총학점'
+    -> from student s
+    -> join attend a on s.std_num = a.at_std_num
+    -> join course c on c.co_code = a.at_co_code
+    -> where a.ato_term ='1'
+    -> group by  s.std_name
+    -> having s.std_name = '전봉준';
+ERROR 1054 (42S22): Unknown column 'a.ato_term' in 'where clause'
+mysql> select s.std_name, sum(c.co_point) as '총학점'
+    -> from student s
+    -> join attend a on s.std_num = a.at_std_num
+    -> join course c on c.co_code = a.at_co_code
+    -> where a.at_term ='1'
+    -> group by  s.std_name
+    -> having s.std_name = '전봉준';
++----------+--------+
+| std_name | 총학점 |
++----------+--------+
+| 전봉준   |      6 |
++----------+--------+
+1 row in set (0.01 sec)
+
+mysql> select  s.std_num, s.std_name, (a.at_term + a.at_mid + a.at_final + a.at_attend + a.at_hw) as sum
+    -> s.std_major, c.co_name
+    -> from attend a
+    -> join student s on a.at_std_num=s.std_num
+    -> join course c on a.at_co_code=c.co_code
+    -> where a.at_repetition = 'y';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's.std_major, c.co_name
+from attend a
+join student s on a.at_std_num=s.std_num
+jo' at line 2
+mysql> select  s.std_num, s.std_name, (a.at_term + a.at_mid + a.at_final + a.at_attend + a.at_hw) as sum,
+    -> s.std_major, c.co_name
+    -> from attend a
+    -> join student s on a.at_std_num=s.std_num
+    -> join course c on a.at_co_code=c.co_code
+    -> where a.at_repetition = 'y';
++------------+----------+------+--------------+------------+
+| std_num    | std_name | sum  | std_major    | co_name    |
++------------+----------+------+--------------+------------+
+| 2020123020 | 박철수   |   73 | 화학공학     | 컴퓨터개론 |
+| 2019456001 | 강길동   |   46 | 디자인       | 기초전기   |
+| 2019160123 | 전봉준   |   35 | 컴퓨터공학과 | 기초전기   |
++------------+----------+------+--------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> select *
+    -> from attend a
+    -> left join student s on a.at_std_num=s.std_num
+    -> where a.at_num is null;
+Empty set (0.00 sec)
+
+mysql> select *
+    -> from student s
+    -> left join student a on at_std_num=std_num
+    -> where a.at_num is null;
+ERROR 1054 (42S22): Unknown column 'a.at_num' in 'where clause'
+mysql> select *
+    -> from student s
+    -> left join student a on at_std_num=std_num
+    -> where at_num is null;
+ERROR 1054 (42S22): Unknown column 'at_num' in 'where clause'
+mysql> select *
+    -> from student s
+    -> left join attend a on at_std_num=std_num
+    -> where at_num is null;
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+| std_num    | std_name | std_major  | std_term | std_point | at_num | at_std_num | at_co_code | at_year | at_term | at_mid | at_final | at_attend | at_hw | at_repetition | at_score |
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+| 2020160003 | 김순이   | 컴퓨터공학 |        1 |        25 |   NULL | NULL       | NULL       |    NULL |    NULL |   NULL |     NULL |      NULL |  NULL | NULL          | NULL     |
+| 2020160004 | 홍순길   | 디자인     |        1 |        20 |   NULL | NULL       | NULL       |    NULL |    NULL |   NULL |     NULL |      NULL |  NULL | NULL          | NULL     |
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select *
+    -> from student s
+    -> left join attend a on at_std_num=std_num
+    -> where a.at_num is null;
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+| std_num    | std_name | std_major  | std_term | std_point | at_num | at_std_num | at_co_code | at_year | at_term | at_mid | at_final | at_attend | at_hw | at_repetition | at_score |
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+| 2020160003 | 김순이   | 컴퓨터공학 |        1 |        25 |   NULL | NULL       | NULL       |    NULL |    NULL |   NULL |     NULL |      NULL |  NULL | NULL          | NULL     |
+| 2020160004 | 홍순길   | 디자인     |        1 |        20 |   NULL | NULL       | NULL       |    NULL |    NULL |   NULL |     NULL |      NULL |  NULL | NULL          | NULL     |
++------------+----------+------------+----------+-----------+--------+------------+------------+---------+---------+--------+----------+-----------+-------+---------------+----------+
+2 rows in set (0.00 sec)
+
+mysql> select s.*
+    -> from student s
+    -> left join attend a on at_std_num=std_num
+    -> where a.at_num is null;
++------------+----------+------------+----------+-----------+
+| std_num    | std_name | std_major  | std_term | std_point |
++------------+----------+------------+----------+-----------+
+| 2020160003 | 김순이   | 컴퓨터공학 |        1 |        25 |
+| 2020160004 | 홍순길   | 디자인     |        1 |        20 |
++------------+----------+------------+----------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+
+C:\Users\EZENIC-166>mysql -uroot -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 23
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database college;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use mysql;
+Database changed
+mysql> grant all privileges on college = to 'mysqluser'@'localhost' with grant option;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '= to 'mysqluser'@'localhost' with grant option' at line 1
+mysql> grant all privileges on college * to 'mysqluser'@'localhost' with grant option;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '* to 'mysqluser'@'localhost' with grant option' at line 1
+mysql> grant all privileges on college. * to 'mysqluser'@'localhost' with grant option;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> mysql -umysqluser -pmysql
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql -umysqluser -pmysql' at line 1
+mysql> exit;
+Bye
+
+C:\Users\EZENIC-166>mysql -umysqluser -pmysql
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 24
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| college            |
+| ezentest           |
+| information_schema |
+| performance_schema |
+| school             |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> use college
+Database changed
+mysql> use school;
+Database changed
+mysql> select * from course;
++------------+----------------+--------------+----------+---------+----------------------+
+| co_code    | co_name        | co_professor | co_point | co_time | co_timetable         |
++------------+----------------+--------------+----------+---------+----------------------+
+| 2020ipc001 | 컴퓨터개론     | 유관순       |        2 |       2 | 화1A,1B,2A,2B        |
+| 2020ipc002 | 기초전기       | 이순신       |        3 |       4 | 월1A,1B,2A목1A,1B,2A |
+| 2020msc001 | 대학수학기초   | 홍길동       |        3 |       3 | 월1A,1B,2A수1A,1B,2A |
+| 2020msc002 | 프로그래밍일반 | 임꺽정       |        3 |       3 | 월1A,1B,2A목1A,1B,2A |
++------------+----------------+--------------+----------+---------+----------------------+
+4 rows in set (0.00 sec)
+
+mysql> create table student(
+    ->      st_num int ,
+    ->      st_name varchar(20) not null,
+    ->      st_term int,
+    ->      st_point int,
+    ->      primary key(std_num)
+    ->      );
+ERROR 1050 (42S01): Table 'student' already exists
+mysql> use college
+Database changed
+mysql> create table student(
+    ->      st_num int ,
+    ->      st_name varchar(20) not null,
+    ->      st_term int,
+    ->      st_point int,
+    ->      primary key(std_num)
+    ->      );
+ERROR 1072 (42000): Key column 'std_num' doesn't exist in table
+mysql> create table student(
+    ->      st_num int ,
+    ->      st_name varchar(20) not null,
+    ->      st_term int,
+    ->      st_point int,
+    ->      primary key(st_num)
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> drop table student;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table student(
+    ->      st_num int not null ,
+    ->      st_name varchar(20) not null,
+    ->      st_term int not null,
+    ->      st_point int not null,
+    ->      primary key(st_num)
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table professor(
+    ->      pr_num int not null,
+    ->      pr_name varchar(20) not null,
+    ->      pr_age int not null,
+    ->      pr_room varchar(45) not null,
+    -> pr_state varchar(45)  not null default '재직',
+    -> pr_position varchar(45)  not null '조교수'
+    ->      primary key(st_num)
+    ->      );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''조교수'
+     primary key(st_num)
+     )' at line 7
+mysql>      );^Z
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1
+    ->
+    -> ;
+ERROR:
+No query specified
+
+mysql> create table professor(
+    ->      pr_num int not null,
+    ->      pr_name varchar(20) not null,
+    ->      pr_age int not null,
+    ->      pr_room varchar(45) not null,
+    -> pr_state varchar(45)  not null default '재직',
+    -> pr_position varchar(45)  not null '조교수' ,
+    ->      primary key(st_num)
+    ->      );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''조교수' ,
+     primary key(st_num)
+     )' at line 7
+mysql> create table professor(
+    ->      pr_num int not null,
+    ->      pr_name varchar(20) not null,
+    ->      pr_age int not null,
+    ->      pr_room varchar(45) not null,
+    -> pr_state varchar(45)  not null default '재직',
+    -> pr_position varchar(45)  not null default '조교수' ,
+    ->      primary key(st_num)
+    ->      );
+ERROR 1072 (42000): Key column 'st_num' doesn't exist in table
+mysql> create table professor(
+    ->      pr_num int not null,
+    ->      pr_name varchar(20) not null,
+    ->      pr_age int not null,
+    ->      pr_room varchar(45) not null,
+    -> pr_state varchar(45)  not null default '재직',
+    -> pr_position varchar(45)  not null default '조교수' ,
+    ->      primary key(pr_num)
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table subject(
+    ->      su_num int not null auto_increment,
+    ->      su_code varchar(20) not null,
+    ->      su_title  varchar(45) not null,
+    ->      su_point int not null default 0,
+    ->      su_time int  not null default 0,
+    ->      primary key(su_num )
+    ->      );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table guide(
+    ->      gu_num int not null auto_increment,
+    ->      gu_pr_num int not null,
+    ->      gu_st_num int not null,
+    ->      gu_year varchar(45) not null default null,
+    ->   foreign key(gu_st_num) references student(std_num),
+    ->     foreign key(gu_pr_num) references professor(pr_num)
+    ->      );
+ERROR 1067 (42000): Invalid default value for 'gu_year'
+mysql> create table guide(
+    ->      gu_num int not null auto_increment,
+    ->      gu_pr_num int not null,
+    ->      gu_st_num int not null,
+    ->      gu_year varchar(45) default null,
+    ->   foreign key(gu_st_num) references student(std_num),
+    ->     foreign key(gu_pr_num) references professor(pr_num)
+    ->      );
+ERROR 1075 (42000): Incorrect table definition; there can be only one auto column and it must be defined as a key
+mysql>
+mysql> create table guide(
+    ->      gu_num int not null auto_increment,
+    ->      gu_pr_num int not null,
+    ->      gu_st_num int not null,
+    ->      gu_year varchar(45) default null,
+    ->   foreign key(gu_st_num) references student(std_num),
+    ->     foreign key(gu_pr_num) references professor(pr_num)
+    -> primary key(gu_num )
+    ->      );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'primary key(gu_num )
+     )' at line 8
+mysql> create table guide(
+    ->      gu_num int not null auto_increment,
+    ->      gu_pr_num int not null,
+    ->      gu_st_num int not null,
+    ->      gu_year varchar(45) default null,
+    ->   foreign key(gu_st_num) references student(std_num),
+    ->     foreign key(gu_pr_num) references professor(pr_num),
+    -> primary key(gu_num )
+    ->      );
+ERROR 3734 (HY000): Failed to add the foreign key constraint. Missing column 'std_num' for constraint 'guide_ibfk_1' in the referenced table 'student'
+mysql> create table guide(
+    ->      gu_num int not null auto_increment,
+    ->      gu_pr_num int not null,
+    ->      gu_st_num int not null,
+    ->      gu_year varchar(45) default null,
+    ->   foreign key(gu_st_num) references student(st_num),
+    ->     foreign key(gu_pr_num) references professor(pr_num),
+    -> primary key(gu_num )
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> create table course(
+    ->      co_num int not null auto_increment,
+    ->      co_pr_num int not null,
+    ->      co_su_num int not null,
+    ->      co_term varchar(10) not null default 1,
+    ->      co_year int not null,
+    ->      co_timetable varchar(100) not null,
+    ->   foreign key(co_pr_num) references professor(pr_num),
+    ->     foreign key(co_su_num) references subject(su_num),
+    -> primary key(co_num )
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table attend(
+    ->      at_num int not null auto_increment,
+    ->      at_std_num int not null,
+    ->      at_co_num int not null,
+    ->      at_mid int not null default 0,
+    ->      at_final int not null default 0,
+    ->      at_attend  int not null default 0,
+    ->      at_homework  int not null default 0,
+    ->      at_score varchar(45) default null,
+    ->      at_pass  varchar(1) default 'n'
+    ->      at_repetition varchar(1) default 'n'
+    ->      primary key(at_num),
+    ->     foreign key(at_std_num) references student(std_num),
+    ->     foreign key(at_co_num ) references course(co_code)
+    ->      );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'at_repetition varchar(1) default 'n'
+     primary key(at_num),
+    foreign key(a' at line 11
+mysql> create table attend(
+    ->      at_num int not null auto_increment,
+    ->      at_std_num int not null,
+    ->      at_co_num int not null,
+    ->      at_mid int not null default 0,
+    ->      at_final int not null default 0,
+    ->      at_attend  int not null default 0,
+    ->      at_homework  int not null default 0,
+    ->      at_score varchar(45) default null,
+    ->      at_pass  varchar(1) default 'n',
+    ->      at_repetition varchar(1) default 'n',
+    ->      primary key(at_num),
+    ->     foreign key(at_std_num) references student(std_num),
+    ->     foreign key(at_co_num ) references course(co_code)
+    ->      );
+ERROR 3734 (HY000): Failed to add the foreign key constraint. Missing column 'std_num' for constraint 'attend_ibfk_1' in the referenced table 'student'
+mysql> create table attend(
+    ->      at_num int not null auto_increment,
+    ->      at_std_num int not null,
+    ->      at_co_num int not null,
+    ->      at_mid int not null default 0,
+    ->      at_final int not null default 0,
+    ->      at_attend  int not null default 0,
+    ->      at_homework  int not null default 0,
+    ->      at_score varchar(45) default null,
+    ->      at_pass  varchar(1) default 'n',
+    ->      at_repetition varchar(1) default 'n',
+    ->      primary key(at_num),
+    ->     foreign key(at_st_num) references student(st_num),
+    ->     foreign key(at_co_num ) references course(co_code)
+    ->      );
+ERROR 1072 (42000): Key column 'at_st_num' doesn't exist in table
+mysql> create table attend(
+    ->      at_num int not null auto_increment,
+    ->      at_st_num int not null,
+    ->      at_co_num int not null,
+    ->      at_mid int not null default 0,
+    ->      at_final int not null default 0,
+    ->      at_attend  int not null default 0,
+    ->      at_homework  int not null default 0,
+    ->      at_score varchar(45) default null,
+    ->      at_pass  varchar(1) default 'n',
+    ->      at_repetition varchar(1) default 'n',
+    ->      primary key(at_num),
+    ->     foreign key(at_st_num) references student(st_num),
+    ->     foreign key(at_co_num ) references course(co_code)
+    ->      );
+ERROR 3734 (HY000): Failed to add the foreign key constraint. Missing column 'co_code' for constraint 'attend_ibfk_2' in the referenced table 'course'
+mysql> create table attend(
+    ->      at_num int not null auto_increment,
+    ->      at_st_num int not null,
+    ->      at_co_num int not null,
+    ->      at_mid int not null default 0,
+    ->      at_final int not null default 0,
+    ->      at_attend  int not null default 0,
+    ->      at_homework  int not null default 0,
+    ->      at_score varchar(45) default null,
+    ->      at_pass  varchar(1) default 'n',
+    ->      at_repetition varchar(1) default 'n',
+    ->      primary key(at_num),
+    ->     foreign key(at_st_num) references student(st_num),
+    ->     foreign key(at_co_num ) references course(co_num)
+    ->      );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql>  insert into subject values
+    -> (1,'msc001','대학수학',3,3),
+    -> (2,'com001','컴퓨터개론',2,2),
+    -> (3,'com002','운영체제',3,3),
+    -> (4,'abc001','글쓰기',2,2),
+    -> (5,'abc002','영어',2,3);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql>  insert into professor values
+    -> (2005789001, '홍길동',60,'B동302호','재직','정교수'),
+    -> (2006456001, '박영실',60,'B동301호','안식년','정교수'),
+    -> (2010160001, '강길동',55,'A동202호','재직','조교수'),
+    -> (2011123001, '이순신',55,'A동203호','재직','조교수');
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> insert into course(co_pr_num, co_su_num, co_term, co_year, co_timetable) values
+    -> (2005789001,1,1,2002,'월2a/2b/3a/3b/4a/4b'),
+    -> (2005789001,1,2,2002,'월2a/2b/3a/3b/4a/4b'),
+    -> (2010160001,2,1,2002,'화1a/1b/2a/2b'),
+    -> (2010160001,3,1,2002,'목2a/2b/3a/3b/4a/4b'),
+    -> (2011123001,4,2,2002,'화1a/1b/2a/2b'),
+    -> (2011123001,5,2,2002,'수1a/1b/2a/2b');
+Query OK, 6 rows affected (0.01 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> insert into guide(gu_pr_num, gu_st_num, gu_year) values
+    -> (2010160001,2020160001,2020),
+    -> (2010160001,2020160002,2020),
+    -> (2011123001,2020123001,2020),
+    -> (2011123001,2020123002,2020),
+    -> (2006456001,2020456001,2020);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`college`.`guide`, CONSTRAINT `guide_ibfk_1` FOREIGN KEY (`gu_st_num`) REFERENCES `student` (`st_num`))
+mysql> insert into attend(at_st_num, at_co_num) values
+    -> (2020123001,1),
+    -> (2020123001,2),
+    -> (2020123001,3),
+    -> (2020123001,4),
+    -> (2020123001,5),
+    -> (2020123001,6),
+    -> (2020123002,1),
+    -> (2020123002,2),
+    -> (2020123002,3),
+    -> (2020123002,4),
+    -> (2020160001,1),
+    -> (2020160001,2),
+    -> (2020160001,3),
+    -> (2020160001,4),
+    -> (2020160001,5),
+    -> (2020160001,6),
+    -> (2020160002,1),
+    -> (2020160002,2),
+    -> (2020160002,3),
+    -> (2020160002,4),
+    -> (2020160002,5),
+    -> (2020160002,6),
+    -> (2020456001,1),
+    -> (2020456001,2),
+    -> (2020456001,3),
+    -> (2020456001,4),
+    -> (2020456001,5);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`college`.`attend`, CONSTRAINT `attend_ibfk_1` FOREIGN KEY (`at_st_num`) REFERENCES `student` (`st_num`))
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql> select * from student;
+Empty set (0.00 sec)
+
+mysql> student desc
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'student desc' at line 1
+mysql> desc student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| st_num   | int         | NO   | PRI | NULL    |       |
+| st_name  | varchar(20) | NO   |     | NULL    |       |
+| st_term  | int         | NO   |     | NULL    |       |
+| st_point | int         | NO   |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql> drop table student;
+ERROR 3730 (HY000): Cannot drop table 'student' referenced by a foreign key constraint 'guide_ibfk_1' on table 'guide'.
+mysql>  insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql>
+mysql>  insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql>
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+ERROR 1364 (HY000): Field 'st_point' doesn't have a default value
+mysql> insert into student(st_num, st_name,st_term) values
+    -> (2020123001,'김영철',2),
+    -> (2020123002,'나영희',2),
+    -> (2020160001,'강철수',2),
+    -> (2020160002,'박철수',2),
+    -> (2020456001,'강군',2);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into guide(gu_pr_num, gu_st_num, gu_year) values
+    -> (2010160001,2020160001,2020),
+    -> (2010160001,2020160002,2020),
+    -> (2011123001,2020123001,2020),
+    -> (2011123001,2020123002,2020),
+    -> (2006456001,2020456001,2020);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from course;
++--------+------------+-----------+---------+---------+---------------------+
+| co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        |
++--------+------------+-----------+---------+---------+---------------------+
+|      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |
+|      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |
+|      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |
+|      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |
++--------+------------+-----------+---------+---------+---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from guide;
++--------+------------+------------+---------+
+| gu_num | gu_pr_num  | gu_st_num  | gu_year |
++--------+------------+------------+---------+
+|      6 | 2010160001 | 2020160001 | 2020    |
+|      7 | 2010160001 | 2020160002 | 2020    |
+|      8 | 2011123001 | 2020123001 | 2020    |
+|      9 | 2011123001 | 2020123002 | 2020    |
+|     10 | 2006456001 | 2020456001 | 2020    |
++--------+------------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from attend;
+Empty set (0.00 sec)
+
+mysql> select * from professor;
++------------+---------+--------+----------+----------+-------------+
+| pr_num     | pr_name | pr_age | pr_room  | pr_state | pr_position |
++------------+---------+--------+----------+----------+-------------+
+| 2005789001 | 홍길동  |     60 | B동302호 | 재직     | 정교수      |
+| 2006456001 | 박영실  |     60 | B동301호 | 안식년   | 정교수      |
+| 2010160001 | 강길동  |     55 | A동202호 | 재직     | 조교수      |
+| 2011123001 | 이순신  |     55 | A동203호 | 재직     | 조교수      |
++------------+---------+--------+----------+----------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from student where st_name = '김영철';
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
++------------+---------+---------+----------+
+1 row in set (0.00 sec)
+
+mysql> select * from student where st_name = '김영철';
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
++------------+---------+---------+----------+
+1 row in set (0.00 sec)
+
+mysql> select  *
+    -> from student s
+    -> join attend a on s.st_num = a.at_st_num
+    -> join course c on a.at_co_code=c.co_num
+    -> join subject su on su_num = co_su_num
+    -> where s.st_name = '김영철';
+ERROR 1054 (42S22): Unknown column 'a.at_co_code' in 'on clause'
+mysql> select  *
+    -> from student s
+    -> join attend a on s.st_num = a.at_st_num
+    -> join course c on a.at_co_num=c.co_num
+    -> join subject su on su_num = co_su_num
+    -> where s.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> select  *
+    -> from student s
+    -> join attend a on s.st_num = a.at_st_num
+    -> join course c on a.at_co_num=c.co_num
+    -> join subject su on su_num = co_su_num
+    -> where s.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> 강길동 교수가 지도하는 학생명 출력
+    ->
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '강길동 교수가  지도하는 학생명 출력' at line 1
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select  *
+    -> from student s
+    -> join attend a on s.st_num = a.at_st_num
+    -> join course c on a.at_co_num=c.co_num
+    -> join subject su on su.su_num = c.co_su_num
+    -> where s.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> select  *
+    -> from student s
+    -> join attend a on s.st_num = a.at_st_num
+    -> join course c on a.at_co_num=c.co_num
+    -> join subject su on su.su_num = c.co_num
+    -> where s.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num
+    -> where st.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num
+    -> where st.st_name = '김영철';
+Empty set (0.00 sec)
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num;
+Empty set (0.00 sec)
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> ;
+Empty set (0.00 sec)
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num;
++------------+
+| su_title   |
++------------+
+| 대학수학   |
+| 대학수학   |
+| 컴퓨터개론 |
+| 운영체제   |
+| 글쓰기     |
+| 영어       |
++------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from attend;
+Empty set (0.00 sec)
+
+mysql>  insert into attend(at_st_num, at_co_num) values
+    -> (2020123001,1),
+    -> (2020123001,2),
+    -> (2020123001,3),
+    -> (2020123001,4),
+    -> (2020123001,5),
+    -> (2020123001,6),
+    -> (2020123002,1),
+    -> (2020123002,2),
+    -> (2020123002,3),
+    -> (2020123002,4),
+    -> (2020160001,1),
+    -> (2020160001,2),
+    -> (2020160001,3),
+    -> (2020160001,4),
+    -> (2020160001,5),
+    -> (2020160001,6),
+    -> (2020160002,1),
+    -> (2020160002,2),
+    -> (2020160002,3),
+    -> (2020160002,4),
+    -> (2020160002,5),
+    -> (2020160002,6),
+    -> (2020456001,1),
+    -> (2020456001,2),
+    -> (2020456001,3),
+    -> (2020456001,4),
+    -> (2020456001,5);
+Query OK, 27 rows affected (0.01 sec)
+Records: 27  Duplicates: 0  Warnings: 0
+
+mysql> select s.su_title from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num
+    -> where st.st_name = '김영철';
++------------+
+| su_title   |
++------------+
+| 대학수학   |
+| 대학수학   |
+| 컴퓨터개론 |
+| 운영체제   |
+| 글쓰기     |
+| 영어       |
++------------+
+6 rows in set (0.00 sec)
+
+mysql> select t.su_title "과목명"
+    -> from course c
+    -> join attend a on c.at_co_num = c.co_num
+    -> join subject t on t.su_num = c.co_su_num
+    -> join student s on a.st_num = s.at_st_num
+    -> where s.std_name = '김영철';
+ERROR 1054 (42S22): Unknown column 's.std_name' in 'where clause'
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select st.name
+    -> from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num
+    -> where s.su_title = '대학수학';
+ERROR 1054 (42S22): Unknown column 'st.name' in 'field list'
+mysql>
+mysql> select st.st_name
+    -> from subject s
+    -> join course c on s.su_num = c.co_su_num
+    -> join attend a on a.at_co_num = c.co_num
+    -> join student st on st.st_num =  a.at_st_num
+    -> where s.su_title = '대학수학';
++---------+
+| st_name |
++---------+
+| 김영철  |
+| 나영희  |
+| 강철수  |
+| 박철수  |
+| 강군    |
+| 김영철  |
+| 나영희  |
+| 강철수  |
+| 박철수  |
+| 강군    |
++---------+
+10 rows in set (0.00 sec)
+
+mysql> tables;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'tables' at line 1
+mysql> show tables;
++-------------------+
+| Tables_in_college |
++-------------------+
+| attend            |
+| course            |
+| guide             |
+| professor         |
+| student           |
+| subject           |
++-------------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from attend;
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+| at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+|     28 | 2020123001 |         1 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     29 | 2020123001 |         2 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     30 | 2020123001 |         3 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     31 | 2020123001 |         4 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     32 | 2020123001 |         5 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     33 | 2020123001 |         6 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     34 | 2020123002 |         1 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     35 | 2020123002 |         2 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     36 | 2020123002 |         3 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     37 | 2020123002 |         4 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     38 | 2020160001 |         1 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     39 | 2020160001 |         2 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     40 | 2020160001 |         3 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     41 | 2020160001 |         4 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     42 | 2020160001 |         5 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     43 | 2020160001 |         6 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     44 | 2020160002 |         1 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     45 | 2020160002 |         2 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     46 | 2020160002 |         3 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     47 | 2020160002 |         4 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     48 | 2020160002 |         5 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     49 | 2020160002 |         6 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     50 | 2020456001 |         1 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     51 | 2020456001 |         2 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     52 | 2020456001 |         3 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     53 | 2020456001 |         4 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
+|     54 | 2020456001 |         5 |      0 |        0 |         0 |           0 | NULL     | n       | n             |
++--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+
+27 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select * from course;
++--------+------------+-----------+---------+---------+---------------------+
+| co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        |
++--------+------------+-----------+---------+---------+---------------------+
+|      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      2 | 2005789001 |         1 | 2       |    2002 | 월2a/2b/3a/3b/4a/4b |
+|      3 | 2010160001 |         2 | 1       |    2002 | 화1a/1b/2a/2b       |
+|      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |
+|      5 | 2011123001 |         4 | 2       |    2002 | 화1a/1b/2a/2b       |
+|      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |
++--------+------------+-----------+---------+---------+---------------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from guide;
++--------+------------+------------+---------+
+| gu_num | gu_pr_num  | gu_st_num  | gu_year |
++--------+------------+------------+---------+
+|      6 | 2010160001 | 2020160001 | 2020    |
+|      7 | 2010160001 | 2020160002 | 2020    |
+|      8 | 2011123001 | 2020123001 | 2020    |
+|      9 | 2011123001 | 2020123002 | 2020    |
+|     10 | 2006456001 | 2020456001 | 2020    |
++--------+------------+------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> select * from professor;
++------------+---------+--------+----------+----------+-------------+
+| pr_num     | pr_name | pr_age | pr_room  | pr_state | pr_position |
++------------+---------+--------+----------+----------+-------------+
+| 2005789001 | 홍길동  |     60 | B동302호 | 재직     | 정교수      |
+| 2006456001 | 박영실  |     60 | B동301호 | 안식년   | 정교수      |
+| 2010160001 | 강길동  |     55 | A동202호 | 재직     | 조교수      |
+| 2011123001 | 이순신  |     55 | A동203호 | 재직     | 조교수      |
++------------+---------+--------+----------+----------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from subject;
++--------+---------+------------+----------+---------+
+| su_num | su_code | su_title   | su_point | su_time |
++--------+---------+------------+----------+---------+
+|      1 | msc001  | 대학수학   |        3 |       3 |
+|      2 | com001  | 컴퓨터개론 |        2 |       2 |
+|      3 | com002  | 운영체제   |        3 |       3 |
+|      4 | abc001  | 글쓰기     |        2 |       2 |
+|      5 | abc002  | 영어       |        2 |       3 |
++--------+---------+------------+----------+---------+
+5 rows in set (0.00 sec)
+
+mysql>
+mysql> select std.st_name, s.su_title from student std
+    -> join attend a on a.at_st_num = std.st_num
+    -> join course c on c.co_num = a.at_co_num
+    -> join subject s on s.su_num = c.co_su_num
+    -> where st_name = '김영철'
+    -> ;
++---------+------------+
+| st_name | su_title   |
++---------+------------+
+| 김영철  | 대학수학   |
+| 김영철  | 대학수학   |
+| 김영철  | 컴퓨터개론 |
+| 김영철  | 운영체제   |
+| 김영철  | 글쓰기     |
+| 김영철  | 영어       |
++---------+------------+
+6 rows in set (0.00 sec)
+
+mysql> select std.st_name as '강길동교수 지도 학생'
+    -> from guide g
+    -> join student std on std.st_num = g.gu_st_num
+    -> join professor p on p.pr_num = g.gu_pr_num
+    -> where p.pr_name = '강길동';
++----------------------+
+| 강길동교수 지도 학생 |
++----------------------+
+| 강철수               |
+| 박철수               |
++----------------------+
+2 rows in set (0.00 sec)
+
+mysql> select st_name as '대학수학 수강자'
+    -> from student std
+    -> join attend a on a.at_st_num = std.st_num
+    -> join course c on c.co_num = a.at_co_num
+    -> join subject s on s.su_num = c.co_su_num
+    -> where s.su_title = '대학수학';
++-----------------+
+| 대학수학 수강자 |
++-----------------+
+| 김영철          |
+| 나영희          |
+| 강철수          |
+| 박철수          |
+| 강군            |
+| 김영철          |
+| 나영희          |
+| 강철수          |
+| 박철수          |
+| 강군            |
++-----------------+
+10 rows in set (0.00 sec)
+
+mysql> UPDATE attend
+    ->      SET at_score = CASE
+    -> WHEN at_mid+at_final+at_attend+at_hw  >= 90 THEN 'A'
+    -> WHEN at_mid+at_final+at_attend+at_hw  >= 80 THEN 'B'
+    -> WHEN at_mid+at_final+at_attend+at_hw >= 70 THEN 'C'
+    -> WHEN at_mid+at_final+at_attend+at_hw >= 70 THEN 'D'
+    ->          ELSE 'F'
+    ->      END
+    -> ;
+ERROR 1054 (42S22): Unknown column 'at_hw' in 'field list'
+mysql> UPDATE attend
+    ->      SET at_score = CASE
+    -> WHEN at_mid+at_final+at_attend+at_homework  >= 90 THEN 'A'
+    -> WHEN at_mid+at_final+at_attend+at_homework  >= 80 THEN 'B'
+    -> WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'C'
+    -> WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'D'
+    ->          ELSE 'F'
+    ->      END
+    -> ;
+Query OK, 27 rows affected (0.00 sec)
+Rows matched: 27  Changed: 27  Warnings: 0
+
+mysql> UPDATE attend
+    ->      SET at_pass = CASE
+    -> WHEN at_score  = 'A' THEN 'p'
+    -> WHEN at_score  = 'B' THEN 'f'
+    ->          ELSE 'f'
+    ->      END
+    -> ;
+Query OK, 27 rows affected (0.00 sec)
+Rows matched: 27  Changed: 27  Warnings: 0
+
+mysql> alter table  attend modify at_pass varchar(1) default 'f';
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE attend
+    ->      SET at_repetition = CASE
+    -> WHEN at_score = 'F' THEN 'y'
+    -> WHEN at_attend  <= 3 THEN 'y'
+    ->          ELSE 'n'
+    ->      END
+    -> ;
+Query OK, 15 rows affected (0.01 sec)
+Rows matched: 27  Changed: 15  Warnings: 0
+
+mysql>

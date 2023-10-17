@@ -1,0 +1,1 @@
+alter table board add readcount int default 0;

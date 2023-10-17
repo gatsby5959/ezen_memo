@@ -1,0 +1,322 @@
+
+
+
+SQL 내장함수
+- 산술연산(+-*/)
+- mod(값, 값2) : 값을 값2로 나눈 나머지
+- round(값, 자리수) : 반올림 (자리수 지정 가능)
+- ceil(ing) : 올림 / floor: 버림 => 자리수 지정안됨.
+- sqrt : 제급근(루트) / pow 제곱
+- rand() : 0~1사이의 난수
+
+문자열함수
+-concat(문자1, 문자2) : 문자열 연결
+-length(문자) : 문자열의 길이 (영어=1, 한글=2)
+-char_length(문자):무조건 1글자로 인식
+-substr(문자열, 시작, 개수) : 문자열에서 시작위치로부터 개수만큼 추출
+-left(문자열, 개수): (왼쪽)앞에서부터 개수만큼 추출
+-right(문자열, 개수): (오른쪽)뒤에서부터 개수만큼 추출
+-mid(문자열, 위치, 개수): 지정위치에서부터 개수만큼 추출
+-replace(문자, old, new) : 문자열에서 old문자를 new문자로 변경
+-insert(문자, 위치, 길이, 삽입할 문자): 문자에서 위치의 길이만큼 삽입
+-upcase:대문자로 변환 / lcase : 소문자 변환
+-space(숫자) : 숫자만큼 공백 추가
+
+
+안녕하세요. 아래에 MySQL의 문자열 관련 함수에 대한 사용 예시와 예상 결과를 작성했습니다.
+
+CONCAT: 문자열 연결
+sql
+Copy code
+SELECT CONCAT('Hello', ', ', 'World');
+결과: Hello, World
+
+LENGTH: 문자열의 길이 계산
+sql
+Copy code
+SELECT LENGTH('Hello');
+결과: 5
+
+CHAR_LENGTH: 문자 수를 계산
+sql
+Copy code
+SELECT CHAR_LENGTH('안녕하세요');
+결과: 5
+
+SUBSTR: 문자열에서 일부 추출
+sql
+Copy code
+SELECT SUBSTR('Hello World', 1, 5);
+결과: Hello
+
+LEFT: 문자열 왼쪽 일부 추출
+sql
+Copy code
+SELECT LEFT('Hello World', 5);
+결과: Hello
+
+RIGHT: 문자열 오른쪽 일부 추출
+sql
+Copy code
+SELECT RIGHT('Hello World', 5);
+결과: World
+
+MID: 문자열 중간 일부 추출
+sql
+Copy code
+SELECT MID('Hello World', 7, 5);
+결과: World
+
+REPLACE: 문자열 일부를 다른 문자열로 변경
+sql
+Copy code
+SELECT REPLACE('Hello World', 'World', 'MySQL');
+결과: Hello MySQL
+
+INSERT: 문자열의 특정 부분을 다른 문자열로 변경
+sql
+Copy code
+SELECT INSERT('Hello World', 7, 5, 'MySQL');
+결과: Hello MySQL
+
+UPPER: 문자열을 대문자로 변환
+sql
+Copy code
+SELECT UPPER('Hello');
+결과: HELLO
+
+LOWER: 문자열을 소문자로 변환
+sql
+Copy code
+SELECT LOWER('Hello');
+결과: hello
+
+SPACE: 특정 수의 공백을 추가
+sql
+Copy code
+SELECT CONCAT('Hello', SPACE(5), 'World');
+결과: Hello World
+
+위의 SQL 쿼리들은 모두 결과를 반환하지만 실제 데이터베이스의 테이블과 상호작용할 때는 해당 테이블의 열 이름을 쿼리에 포함시켜야 합니다. 예를 들어, 'users' 테이블에서 'first_name'과 'last_name'을 연결하려면 다음과 같이 쿼리를 작성할 수 있습니다:
+
+sql
+Copy code
+SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;
+이 쿼리는 'users' 테이블의 각 행에 대해 'first_name'과 'last_name' 사이에 공백을 포함하여 이 두 열을 연결한 결과를 반환합니다.
+
+
+
+
+- trim(문자) : 공백제거 / ltrim/ rtrim
+- trim(both 'a' from 'aaaaaaabcdefgaaaaaa') => bcdefg
+ select trim(both 'a' from 'aaaaaaabcdefgaaaaaa');
+
+- both = 양쪽 / leading = 앞 / trailing = 뒤
+- lpad(문자, 총길이, 채울문자)/ rpad : 앞 / 뒤쪽에 총길이만큼 공백으로
+삽입하고, 공백 부분에 문자 채우기
+- repeat(문자열, 횟수) : 문자열을 횟수만큼 반복
+- reverse(문자열) : 문자열을 거꾸로 출력
+
+날짜함수
+-adddate / subdate : 날짜를 기준으로 ~후, ~전의 날짜
+adddate(날짜, interval 5day)
+interval 뒤쪽 값 : year, month, day, hour, minute, second
+- curdate(), curtime(), now(), sysdate() : 오늘날짜 시간
+- addtime / subtime : 시간을 더하고 / 뺀 결과
+addtime(날짜/시간, 시:분:초)
+- year(날짜), month(날짜), day(날짜), hour(날짜), minute(날짜), second(날짜);
+- date(날짜), time(시간) : 날짜/ 시간 추출
+- datediff(날짜1, 날짜2) / timediff(날짜 / 시간, 날짜/시간)
+날짜2에서 날짜1까지 남은 값(날짜 / 시간)
+- dayofweek(날짜) : 요일 (일-1, 월=2 ...)
+- monthname(날짜) : 월의 영어이름 리턴
+- dayofyear(날짜) : 1년중 며칠이 경과 했는지 리턴
+- last_day(날짜) : 해당 날의 월이 며칠까지 있는지 확인
+- time_to_sec(시간) : 시간을 초단위로 반환
+
+
+논리함수
+- if(조건식, 참, 거짓)
+- if(조건식, 참, if(조건식, 참, 거짓)) => 다중if
+- case ~ when ~ then 문
+case
+when 조건식 then 값
+when 조건식 then 값
+when 조건식 then 값
+else 값
+end;
+
+정보함수
+user(), current_user(), session_user() : 현재사용자
+database(), schema() : 사용중인 DB명 반환
+
+
+
+
+-student테이블에서 다음 값을 처리하세요.
+1. 등급을 나타내는 칼럼을 추가
+alter table student change rank1 ranking varchar(2);
+2. score 점수에 따라서 rank ABC를 추가
+score >= 80 =>A
+score >= 60 =>B
+나머지 =>C
+
+추가한다고 추가하는게 아님.... DB에 이미 행은 추가되어있고
+그 값을 업데이트 한다는 개념임 아래 인서트는 안돌아감
+insert into student (ranking) values(
+case
+when score >= 80 then  'A'
+when score >= 60 then  'B'
+else 'C'
+end
+);
+
+아래 업데이트문이 돌아감
+UPDATE student
+SET ranking = CASE
+    	      WHEN score >= 80 THEN 'A'
+    	      WHEN score >= 60 THEN 'B'
+    	      ELSE 'C'
+                  END;
+3. rank별 인원수 출력
+select ranking , count(num) from student group by (ranking);
+
+
+
+
+
+
+
+create table Product(
+num int autoincre not null,
+name varchar(30) not null,
+age varchar(20) default 20,
+address varchar(45),
+major varchar(45),
+score int,
+primary key(num));
+
+
+create table Product(
+num int auto_increment,
+type_a varchar(30) not null,
+type_b varchar(30),
+name varchar(30) not null,
+price int not null,
+amount int,
+sale_amount int,
+register_date DATETIME,
+primary key(num));
+
+
+create table buy(
+num int auto_increment,
+customer varchar(20),
+product_name varchar(20),
+price int default 0,
+amout int default 0,
+buy_date timestamp,
+primary key(num));
+
+
+buy 테이블에 데이터 추가
+홍길동 폴라티셔츠 3장을 구매 했습니다.
+인서트인트 구문을 이용해서 해보세요
+insert into buy (
+customer,
+product_name ,
+price ,
+amout 
+) 
+values(
+'홍길동',
+'콜라 티셔츠', 
+'15000',
+3
+);
+
+홍길순 폴라티셔츠 5장 구매
+--테이블에서 검색해서 추가
+insert into buy(customer, product_name, price, amout)
+select '홍길순', name, price, 5 from product where num = 1;
+
+이순신 피트니스상의 10장 구매
+insert into buy(customer, product_name, price, amout)
+select '이순신', name, price, 10 from product where type_b = '피트니스상의';
+
+amount 뒤에 total 칼럼을 추가
+값을 price * amount 값으로 변경
+ALTER TABLE buy add total after amount;
+
+ALTER TABLE table_name 
+CHANGE COLUMN old_column_name new_column_name column_type;
+ALTER TABLE buy
+CHANGE COLUMN amout amount int;
+
+-- generated columnss
+-- 컬럼 생성시 계산된 값을 자동계산하여 생성할 때 사용함(generated always as)
+alter table buy add total double generated always as (price*amount) stored;
+-stored :값이 저장되는 방식 
+(데이터가 입력되거나 수정될 때 해당 칼럼도 같이 갱신)
+-virtual: 데이터를 저장하지 않고 정의만..
+(해당칼럼을 읽으려고 시도할 때 계산을 통해 보여주는 것만)(보기만!...)
+
+
+insert into buy(customer, product_name, price, amount)
+select '김신호', name, price, 7 from product where type_b = '피트니스상의';
+
+
+alter table buy modify buy_date default datetime;
+alter table buy modify buy_date datetime default CURRENT_TIMESTAMP;
+
+insert into buy(customer, product_name, price, amount)
+select '김신호', name, price, 7 from product where type_b = '피트니스상의';
+
+
+insert into buy(customer, product_name, price, amount)
+select '장원희', name, price, 1 from product where name = '롱 패딩 점퍼';
+
+insert into buy(customer, product_name, price, amount)
+select '이성훈', name, price, 1 from product where name = '양털 겨울 코드';
+
+insert into buy(customer, product_name, price, amount)
+select '류지영', name, price, 2 from product where name = '양면 롱 후리스 자켓';
+
+insert into buy(customer, product_name, price, amount)
+select '장우호', name, price, 2 from product where num = '3';
+
+insert into buy(customer, product_name, price, amount)
+select '이동훈', name, price, 3 from product where name = '에이 나시';
+
+insert into buy(customer, product_name, price, amount)
+select '김소월', name, price, 5 from product where num = 3;
+
+
+--오늘 총 판매 수량과 금액을 구하시오
+select sum(amount), sum(total) from buy where buy_date = today();
+
+
+--오늘 총 판매 수량과 금액을 구하시오
+select sum(amount), sum(total) from buy where date_format(buy_date, '%Y%m%d') = DATE_FORMAT(now(),('%Y%m%d'));
+
+
+
+과제 - product 테이블에서
+1. 최신상품순으로 정렬 출력
+select * from product order by register_date desc;
+
+2. type_a별로 상품 개수 와 price합계를 출력
+select type_a, count(num), sum(price) from product group by type_a;
+
+3. price 16000 이상인 제품은 할인상품에 해당, 할인상품을 출력하시오.
+select * from product where price >=16000;
+
+4. 할인상품의 이름과 할인가격을 출력
+ - 할인가격(16000원 이상인 제품만을 대상으로 10% 할인된 가격)
+ - 할인상품명, 정상가, 할인가
+ select name as '할인상품name명' , price as '정상가' , price*(1-0.1) as '할인가' from product where price >=16000;
+
+
+5. 11월에 입고된 상품만 출력
+select * from product where date_format(buy_date, '%Y%m%d') = DATE_FORMAT(YYYY11MM,('%Y%m%d'));
+

@@ -1,0 +1,39 @@
+검색, 페이징
+
+페이징부터 해야 검색을 페이징 VO에 넣을수 있음
+
+- VO 생성
+- Handler 생성
+- jsp 설정
+
+
+contoller -> service -> dao -> mapper
+
+-댓글 처리
+comment 테이블 생성
+cno : , 댓글 번호
+bno : 게시글 번호
+writer : 작성자
+content : 댓글
+reg_date : 등록일
+
+
+
+//	CREATE TABLE comment (
+//			  cno int NOT NULL AUTO_INCREMENT,
+//			  bno int NOT NULL,
+//			  writer varchar(100) ,
+//			  content varchar(500) ,
+//			  regdate datetime DEFAULT CURRENT_TIMESTAMP,
+//			  PRIMARY KEY (cno)
+//			); 
+
+
+댓글관련 디펜던시dependency
+- jackson-databind 2.13.0
+- jackson-dataformat-xml 2.13.0
+
+post : 등록
+get : 조회
+put : 수정
+delete : 삭제

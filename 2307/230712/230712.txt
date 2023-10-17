@@ -1,0 +1,204 @@
+
+230711저녁 숙제
+1. at_mid at_final at attend at_hw 값 업데이트
+40,40,10,10 으로 반영하기(툴로 완료) mysql워크밴치
+
+2. 합계 값을 이용하여 at_score 업데이트
+at_mid+at_final+at_attend+at_hw >=90 A/ >=80 B/ >=70 C / >=60 D / F
+ 
+UPDATE attend 
+     SET at_score = CASE
+WHEN at_mid+at_final+at_attend+at_homework  >= 90 THEN 'A'
+WHEN at_mid+at_final+at_attend+at_homework  >= 80 THEN 'B'
+WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'C'
+WHEN at_mid+at_final+at_attend+at_homework >= 70 THEN 'D'
+         ELSE 'F'
+     END
+;
+
+3. at_pass 값 업데이트 (p/f) : at_score가 A 또는 B 이면 p(pass) 아니면 f(fail)
+update attend set at_pass =
+(if(at_score='A' or at_score='B','p','f'));
+
+
+
+
+4. at_pass 기본값 속성을 f로 변경 alter의 디폴트를 f로 하기
+
+alter table  attend modify at_pass varchar(1) default 'f';
+
+5. at_repetition 값 업데이트 (y/n)
+at_score가 F이거나, at_attend 가 3이하인 자료는 y 아니면 n
+
+UPDATE attend 
+SET at_repetition = 
+if(at_score='F' or at_attend <=3, 'y','n');
+
+
+김영철이 수강하는 과목 출력
+대학수학(1)
+대학수학(2)
+컴퓨터개론(1)
+
+concat(name, '할인상품')
+
+select std.st_name,  concat(s.su_title  , concat( '(' ,  concat( c.co_term, ')' ) ) ) as '김영철 수강과목'
+ from student std
+ join attend a on a.at_st_num = std.st_num
+ join course c on c.co_num = a.at_co_num
+ join subject s on s.su_num = c.co_su_num
+where st_name = '김영철';
+
+
+student 테이블 st_name에 인덱스 추가
+create index idx_name on student(st_name);
+
+alter table student drop index idx_name;
+
+1학기 수업을 들은 친구들 뷰
+학번, 이름
+조건 co_term 1인 학생들,
+
+create view 1term_view1 as
+select s.st_num, s.st_name
+from student s, course c
+where c.co_term='1';
+
+
+1학기 수업을 들은 친구들 뷰
+학번, 이름 , 과목이름
+조건 co_term 1인 학생들,
+
+create view 1term_view2 as
+select distinct s.st_num, s.st_name, su.su_title
+from student s, course c, subject su
+where c.co_term='1';
+
+--기존 뷰 수정
+create or replace view 1term_view2 as
+select s.st_num, s.st_name, group_concat(distinct b.su_title) 
+from student s, course c, subject b
+where c.co_term='1'
+group by s.st_num, s.st_name;
+
+
+school db에서
+- 컴퓨터 공학과 뷰 생성
+- 학번, 이름, 학과
+create or replace view view_computerstd as
+select std_num, std_name, std_major
+from student
+where std_major = "컴퓨터공학";
+
+- A학점인 친구들 뷰 생성
+- 학번 이름 학점
+create or replace view view_A_std as
+ select std.std_num, std.std_name, at.at_score
+from attend at,
+student std
+where at.at_std_num= std.std_num
+and  at.at_score = 'A' ;
+
+
+
+
+홍길동이 에이 나시 3개 구매하면 에이 나시 제품의 
+재고량(amount) -3 판매량(sale_amount) +3이 되게 트리거 작성
+
+buy 테이블에 값이 생성(insert)가 되면 product 테이블에 
+amount(재고량), sale_amount(판매량) 이 변동되는 트리거 생성
+
+
+drop trigger if exists insert_buy;
+delimiter //
+create trigger insert_buy after insert on buy
+for each row
+begin
+update product set
+amount = amount - new.amount,
+sale_amount = sale_amount + new.amount
+where name = new.product_name;
+end //
+delimiter ;
+
+update product set amount = 100;
+update product set sale_amount = 0;
+
+
+insert into buy(customer, product_name, price, amount)
+values('홍길동','에이 나시', 9000, 3 );
+
+insert into buy(customer, product_name, price, amount)
+values('홍길동','콜라 티셔츠', 15000, 3 );
+
+------------------------------------------------------------------------------
+- buy 테이블에 값을 삭제하면 product 테이블의 amount, sale_amount
+값이 변경되는 트리거를 작성
+drop trigger if exists delete_buy;
+delimiter //
+create trigger delete_buy after delete on buy
+for each row
+begin
+update product set
+amount = amount + old.amount,
+sale_amount = sale_amount - old.amount
+where name = old.product_name;
+end//
+delimiter ;
+
+drop trigger if exists delete_buy;
+delimiter //
+create trigger delete_buy after delete on buy
+for each row
+begin
+declare _amount int default 0;
+set _amount = old.amount;
+update product set
+amount = amount + _amount,
+sale_amount = sale_amount - _amount
+where name = old.product_name;
+end//
+delimiter ;
+
+delete from buy where num = 17;
+delete from buy where num = 18;
+
+
+
+--------------------------------------------------------------------------
+과제
+과제 : school DB에서 진행
+course 테이블에 해당과목을 수강하는 인원을 집계하는 필드를 생성
+co_degree : 필드명 int default 0;
+alter table course add co_degree int default 0;
+co_degree 필드에 해당코스를 듣고 있는 인원수를 집계하여 업데이트 
+
+select at_co_code , count(1) as cnt from attend group by at_co_code;
+
+update course set co_degree =(
+ select count(1) as cnt from attend 
+where attend.at_co_code = course.co_code
+  group by at_co_code);
+
+
+트리거 하기전 사전집계
+
+-이제 트리거
+attend에 수강신청을 하면 course의 co_degree가 자동으로 증가
+
+drop trigger if exists insert_attend;
+delimiter //
+create trigger insert_attend after insert on attend
+for each row
+begin
+update course set
+co_degree = co_degree + 1
+where co_code = new.at_co_code;
+end //
+delimiter ;
+
+insert into attend (at_std_num , at_co_code , at_year , at_term , at_mid , 
+at_final , at_attend , at_hw , at_repetition , at_score) 
+ values(2019160123, '2020ipc002' , 2023 , 1, 
+10 ,      10 ,         5 ,     9 , 'y'             , 'F');
+

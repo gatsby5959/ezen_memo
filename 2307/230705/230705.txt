@@ -1,0 +1,206 @@
+update 테이블명
+set 변경데이터
+where 조건;
+
+홍길동(id=1) 나이를 20살로 변경
+update test1
+set age = 20
+where id = 1;
+
+강기순(id=3) 나이를 25살로 변경
+update test1
+set age = 20
+where name = '강기순';
+
+
+모든 학생들의 나이를 1살씩 증가
+update test1
+set age = age+1
+
+나이가 26인 학생들은 삭제
+delete from test1 where age = 26;
+
+
+
+create table student(
+num int not null,
+name varchar(30) not null,
+age varchar(20) default 20,
+address varchar(45),
+major varchar(45),
+score int,
+primary key(num));
+
+insert into student values
+(1111,'홍길동',23,'Seoul','Computer',89),
+(2222,'강길순',24,'Seoul','English',87),
+(3333,'이순신',22,'incheon','Computer',57),
+(4444,'강감찬',23,'Incheon','English',67),
+(5555,'강감찬',21,'suwon','Computer',97);
+
+
+
+
+alter table 테이블명 add primary key(필드명);
+
+숙제1
+1. major가 Computer인 학생 검색
+select * from student where major = 'Computer';
+2. marjor가 Computer인 학생이고 score가 90이상인 학생
+select * from student where major = 'Computer' and score >= 90;
+select name,major from student where major = 'Computer' and score >= 90;
+3. score가 70~90 사이인 자료 검색
+select * from student where score between 70 and 90;
+4. seoul과 incheon에 사는 친구
+select * from student where address = 'seoul' or address = 'incheon';
+select * from student where address in ('seoul' , 'incheon');
+5. 강감찬의 major를 computer로 변경
+update student set major = 'computer' where name = '강감찬';
+6. 강감찬 데이터를 삭제
+delete from student where name = '강감찬';
+
+distinct : 중복제거
+select distinct major from student; 중복 없이 출력
+
+산술연산자(+-*/)
+산술연산자 값이 null일 경우 null로 처리
+비교연산자(> < >= <= = <>)
+논리연산자(and  or not)
+우선순위 결정 ( )
+
+집약과 정렬
+집약 : 열의 데이터를 합계, 평균 같은 집계값을 구하기 위한 집약함수
+- count : 검색된 행의 개수
+- sum : 합계
+- avg : 평균
+- max : 최대값
+- min : 최소값
+- group by : 데이터 별로 묶음
+- having : 그룹의 조건
+- order by : 정렬에 대한 기준은 여러개 줄 수 있음.
+	각 필드마다 asc, desc인지 결정해야함.
+- limit : 시간번지, 개수 => 시작번지부터 개수만큼 추출
+
+
+
+
+insert into student(num, name, age, address, major, score)
+values(6666,'hong',23,'suwon','korea',89);
+insert into student(num, name, age, address, major, score)
+values(7777,'gilsung',24,'seoul','english',87);
+insert into student(num, name, age, address, major, score)
+values(8888,'leesunsin',22,'korea','computer',57);
+insert into student(num, name, age, address, major, score)
+values(9999,'kaung',23,'incheon','english',67);
+insert into student(num, name, age, address, major, score)
+values(0001,'sunny',21,'suwon','korea',97);
+
+
+- mager가 computer인 스코어의 합계
+ select sum(score) from student where major = 'computer';
+
+- 각 major별 합계
+출력을 mager랑 합계로 출력
+ select major, sum(score) from student group by major;
+- 각 major 별로 인원수 출력
+ select major, count(num) from student group by major;
+
+
+
+ select major as '전공', count(num) as '인원수' from student group by major having  major ='computer'
+
+
+-grade는 학년을 나타내는 컬럼 (int)
+-student 테이블에 grade 칼럼 추가
+-21=1, 22=2, 23=3 24=4
+
+case ~ when ~ then 문
+update student set grade = (
+case
+when age=21 then 1
+when age=22 then 2
+when age=23 then 3
+when age=24 then 4
+end);
+
+if(조건식, 참, 거짓)
+if(조건식, 참, if(조건식, 참, 거짓))
+
+alter table student add grade int;
+
+update student set grade = 1 where age = 21;
+update student set grade = 2 where age = 22;
+update student set grade = 3 where age = 23;
+update student set grade = 4 where age = 24;
+
+if(조건식, 참 , 거짓)
+if(조건식, 참, if(조건식, 참, 거짓))
+
+-grade 4인 튜플을 졸업생 테이블(student_4)로 이동
+1. student_4 테이블을 student 테이블과 같은 구조로 생성
+create table (if not exists) 새테이블명 like 원본테이블;
+=>원본테이블의 구조를 복사하여 새테이블을 생성
+=>if not exists (테이블이 없으면 생성)
+2. grade가 4인 튜플만 student_4로 이동(복사한다) (원본은 남음)
+create table if not exists student_4 like student;
+
+insert into 구문을 활용
+=> values(추가할 값들...)
+=> select * from student where grade = 4;
+insert into student_4(num, name, age, address, major, score, grade)
+select * from student where grade = 4;
+
+3. student테이블에 grade가 4인 튜플을 삭제
+select * from student where grade = 4;
+delete from student where grade = 4;
+
+
+4. student테이블의 grade를 1씩 증가
+update student set grade = grade+1 , age = age+1;
+
+5. age도 1씩 증가
+update student set age = age+1; 
+
+
+테이블test3을 생성하고 작성
+
+create table test3(
+num int not null,
+name varchar(10) not null,
+dep varchar(20) ,
+addr varchar(20),
+tel varchar(5),
+score int,
+primary key(num));
+
+insert into test3 values(100, '홍길동', '경영학과','원주시','111',78);
+insert into test3 values(200, '김길동', '경영학과','서울시','123',89),
+(300,'이길동','컴퓨터','원주시','456',68),
+(400,'박길동','컴퓨터','수원시','222',97),
+(500,'고길동','경영학과','서울시','333',62),
+(600,'구길동','컴퓨터','인천시','789',93);
+
+
+
+과제 test3테이블을 생성하고 다음과제를 수행하시오.
+1.학과가 경영학과인 학생들을 출력
+select * from test3 where major = '경영학과';
+2.성적이 80이상인 학생들을 출력
+select * from test3 where score >= 80;
+3.학과가 컴퓨터인 튜플을 컴퓨터학과로 변경
+update test3 set dep = '컴퓨터학과 where dep = '컴퓨터';
+4.이름컬럼 뒤에 나이(age) 컬럼을 추가하고 값을 20으로 설정
+alter table test3 add age int default 20;
+alter table test2 add tel varchar(10);
+5.학과별인원수 출력
+select dep as 학과 , count(num) from test3 group by dep;
+6.학과별 성적평균 출력
+select dep as 학과 , avg(score) from test3 group by dep;
+7.주소별 인원수 출력
+select addr as 주소 , count(num) from test3 group by addr;
+8.경영학과의 성적 합계 출력
+select sum(score) as 경영학과성적합계 from test3 where dep = '경영학과';
+9. 주소가 서울 또는 원주인 학생들 출력
+select * from test3 where addr in ('서울시','원주시');
+10. 성적이 70이상인 학생들의 학번, 이름, 학과, 성적만 출력
+select num,name,dep,score from test3 where score >= 70;

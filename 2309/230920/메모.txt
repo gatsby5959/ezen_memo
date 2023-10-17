@@ -1,0 +1,48 @@
+페이징
+VO, DTO=> 컨트롤러 -> DB로 데이터를 전송
+DB에 저장할 객체를 생성하는 목적으로 만들어주는 클래스
+저장한 객체를 가져와 화면에 뿌릴때도 사용
+
+DB와 상관없이 화면에서 조작해야하는 값이 필요하다면 Handler를 사용
+페이징 DB구문
+ select * from board order by bno desc limit 0,10;  시작번지 , 개수  pageNo qty
+ select * from board order by bno desc limit 0,10;  //1번째 페이지
+ select * from board order by bno desc limit 10,10;  //2페이지
+ select * from board order by bno desc limit 20,10;  //3페이지
+
+
+검색
+ select * from board where bno > 0
+//type에 따라 content, writer, title에서 검색해야 하는 부분이 나누어짐.
+and title like '%과제%' or content like '%과제%' or writer lie '%과제%' 
+order by bno desc
+limit #{pageStart}, #{qty}
+
+검색은 페이징과 한 세트, 검색 결과만을 페이징해서 표시해야 되기 때문에..
+
+'%#{keyword}%' 은 에러나서 concat('%',@{keyword},'%')을 씀
+
+
+
+댓글 - 비동기 방식
+lib => json-simple-1.1.1 추가
+
+동기방식 - 한번의 전송 -> 한번의 페이지 변경(jsp이동, 변경)
+비동기방식 - 한번의 전송 -> 한 섹션만의 변경 (전체 변경이 아닌 부분적인 변경)(댓글)
+
+JSON : 화면 <-> 서버 { } Object를 주고받고 하기위한 표준(언어는 아님, 형태임)
+		     object --> string
+화면 (object{[{}]}) <--------------------------->  서버(String형태로 받으면 -> 객체로 변환 new)
+		     object <-- string
+
+
+
+파일첨부
+lib -> 	commons-fileupload-1.4, 
+	commons-io-2.11.0, 
+	thumbnailator-0.4.17
+<form> 태그에 enctype = "multipart/form-data" 추가
+
+
+
+(로그인되면 idpw숨기게... 내가쓴글만 조회되는 버튼...)

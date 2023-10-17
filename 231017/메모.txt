@@ -1,0 +1,54 @@
+> lombok은 한글 폴더 인식 못함
+(처음 롬복 설치시 설치 후 프로그램 종료 후 재시작)
+
+1. 워크스페이스 생성선택  D:\_spring_workspace\_springTest2
+
+2. 폴더 안에 내가 쓸 프로그램 모아 놓기(톰켓 롬복 등등 다 모아버림 subline텍스트들 등등) 
+
+3. 프로젝트 폴더 생성 (_springTest2 등등)
+
+4. 해당 프로젝트 폴더로 sts 열기
+
+5. 설정(encoding, server, jdk, complier, webbrower, 등)
+
+6. 프로젝트 생성
+
+7. 서버포트 , 경로 설정
+
+8. 프로젝트 기본설정 (jdk, server 설정)
+
+9. pom.xml 설정
+	- db관련, json관련, fileupload관련, security, 
+	- sprind-jdbc, spring-test
+	- logback 1.2.3 (logback-classic / core)
+	- log4jdbc1.16 (log4jdbc-log4j2-jdbc4.1)  (쿼리문 보기)
+		- log4jdbc.log4j2.properties
+		-
+		log4jdbc.spylogdelegator.name=net.sf.log4jdbc.log.slf4j.Slf4jSpyLogDelegator
+
+	- db => hikaricp
+
+기존의 xml 설정 대신 xml => java 클래스 설정으로 변경
+
+
+
+MybatisConfig.xml의
+=> <setting name="mapUnderscoreToCamelCase" value="true"/>
+=>일반적으로 DB_로 언더스코어로 띄어쓰기 구분 / java CamelCase를 스케이크테이스로 바꿈
+
+web.xml	=> WebConfig extends abstractAnnotationConfigDispatcherSerletInitializer
+=> rootConfigclass 설정
+=> servletConfigclass 설정
+=> servletMapping 설정
+=> servletFilter 설정
+=> customizeRegisteration 나중에 exception처리를 위한 설정
+
+root-context.xml => RootConfig
+=> DB설정
+
+servlet-context.xml => ServletConfiguration
+=> implements WebMvcConfigurer
+
+
+
+

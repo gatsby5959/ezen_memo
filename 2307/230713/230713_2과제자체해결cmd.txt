@@ -1,0 +1,520 @@
+Microsoft Windows [Version 10.0.19045.3208]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\EZENIC-166>mysql -uroot -pezen;
+mysql: [Warning] Using a password on the command line interface can be insecure.
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+
+C:\Users\EZENIC-166>mysql -uroot -pezen
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 28
+Server version: 8.0.32 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use college
+Database changed
+mysql> select *
+    -> from student
+    -> INNER JOIN attend a ON student.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE student.st_num = 2020123001
+    -> AND a.at_repetition = 'n';
++------------+---------+---------+----------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+--------+------------+-----------+---------+---------+---------------------+--------+---------+----------+----------+---------+
+| st_num     | st_name | st_term | st_point | at_num | at_st_num  | at_co_num | at_mid | at_final | at_attend | at_homework | at_score | at_pass | at_repetition | co_num | co_pr_num  | co_su_num | co_term | co_year | co_timetable        | su_num | su_code | su_title | su_point | su_time |
++------------+---------+---------+----------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+--------+------------+-----------+---------+---------+---------------------+--------+---------+----------+----------+---------+
+| 2020123001 | 김영철  |       2 |        0 |     28 | 2020123001 |         1 |     39 |       38 |        10 |          10 | A        | p       | n             |      1 | 2005789001 |         1 | 1       |    2002 | 월2a/2b/3a/3b/4a/4b |      1 | msc001  | 대학수학 |        3 |       3 |
+| 2020123001 | 김영철  |       2 |        0 |     31 | 2020123001 |         4 |     40 |       40 |        10 |          10 | A        | p       | n             |      4 | 2010160001 |         3 | 1       |    2002 | 목2a/2b/3a/3b/4a/4b |      3 | com002  | 운영체제 |        3 |       3 |
+| 2020123001 | 김영철  |       2 |        0 |     33 | 2020123001 |         6 |     40 |       40 |        10 |          10 | A        | p       | n             |      6 | 2011123001 |         5 | 2       |    2002 | 수1a/1b/2a/2b       |      5 | abc002  | 영어     |        2 |       3 |
++------------+---------+---------+----------+--------+------------+-----------+--------+----------+-----------+-------------+----------+---------+---------------+--------+------------+-----------+---------+---------+---------------------+--------+---------+----------+----------+---------+
+3 rows in set (0.00 sec)
+
+mysql> select su_point
+    -> from student
+    -> INNER JOIN attend a ON student.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE student.st_num = 2020123001
+    -> AND a.at_repetition = 'n';
++----------+
+| su_point |
++----------+
+|        3 |
+|        3 |
+|        2 |
++----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select su_point
+    -> from student
+    -> INNER JOIN attend a ON student.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE student.st_num = 2020123001
+    -> AND a.at_repetition = 'n';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select su_point
+from student
+INNER JOIN attend a ON student.st_num = a.at_' at line 3
+mysql> );
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1
+mysql>
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select su_point
+    -> from student
+    -> INNER JOIN attend a ON student.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE student.st_num = 2020123001
+    -> AND a.at_repetition = 'n');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select su_point
+from student
+INNER JOIN attend a ON student.st_num = a.at_' at line 3
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select su_point
+    -> from student st
+    -> INNER JOIN attend a ON student.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select su_point
+from student st
+INNER JOIN attend a ON student.st_num = a.' at line 3
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select su_point
+    -> from student st
+    -> INNER JOIN attend a ON st.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select su_point
+from student st
+INNER JOIN attend a ON st.st_num = a.at_st' at line 3
+mysql>
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select su_point
+    -> from student st
+    -> INNER JOIN attend a ON st.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select su_point
+from student st
+INNER JOIN attend a ON st.st_num = a.at_st' at line 3
+mysql> select sub.su_point
+    -> from student st
+    -> INNER JOIN attend a ON st.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n'
+    -> ;
++----------+
+| su_point |
++----------+
+|        3 |
+|        3 |
+|        2 |
++----------+
+3 rows in set (0.00 sec)
+
+mysql> update student st
+    -> set st.st_point =  su_point
+    -> where in (
+    -> select sub.su_point
+    -> from student st
+    -> INNER JOIN attend a ON st.st_num = a.at_st_num
+    -> INNER JOIN course c ON a.at_co_num = c.co_num
+    -> INNER JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n');
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'in (
+select sub.su_point
+from student st
+INNER JOIN attend a ON st.st_num = a.a' at line 3
+mysql> select sub.su_point
+    -> from student st
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n';
++----------+
+| su_point |
++----------+
+|        3 |
+|        3 |
+|        2 |
++----------+
+3 rows in set (0.00 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> select sum(sub.su_point)
+    -> from student st
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = 2020123001
+    -> AND a.at_repetition = 'n';
++-------------------+
+| sum(sub.su_point) |
++-------------------+
+|                 8 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql>
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student st
+    -> set st.st_point =  select sum(sub.su_point)
+    -> from student st
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where student = in_std_num;
+    -> END //
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select sum(sub.su_point)
+from student st
+JOIN attend a ON st.st_num = a.at_st_nu' at line 5
+mysql> DELIMITER ;
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql>
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student st
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where student = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> update_stpoint(2020123001);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'update_stpoint(2020123001)' at line 1
+mysql> call update_stpoint(2020123001);
+ERROR 1054 (42S22): Unknown column 'student' in 'where clause'
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        0 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student st
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where st.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'st' for update in FROM clause
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student st
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where st.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'st' for update in FROM clause
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student st
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where st.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'st' for update in FROM clause
+mysql> select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n';
+ERROR 1054 (42S22): Unknown column 'in_std_num' in 'where clause'
+mysql> select sum(sub.su_point)
+    ->     -> from student st2
+    ->     -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->     -> JOIN course c ON a.at_co_num = c.co_num
+    ->     -> JOIN subject sub ON sub.su_num = c.co_su_num
+    ->     -> WHERE st2.st_num = in_std_num
+    ->
+    -> select sum(sub.su_point)
+    ->     -> from student st2
+    ->     -> JOIN attend a ON st2.st_num = a.at_st_num
+    ->     -> JOIN course c ON a.at_co_num = c.co_num
+    ->     -> JOIN subject sub ON sub.su_num = c.co_su_num
+    ->     -> WHERE st2.st_num = in_std_num
+    ->     -> AND a.at_repetition = 'n';^C
+mysql> select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> WHERE st2.st_num = in_std_num^C
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'st' for update in FROM clause
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student as st
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where st.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'st' for update in FROM clause
+mysql>
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student
+    -> set st.st_point =  (select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where student.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1054 (42S22): Unknown column 'st.st_point' in 'field list'
+mysql>
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    -> update student
+    -> set st_point =  (select sum(sub.su_point)
+    -> from student st2
+    -> JOIN attend a ON st2.st_num = a.at_st_num
+    -> JOIN course c ON a.at_co_num = c.co_num
+    -> JOIN subject sub ON sub.su_num = c.co_su_num
+    -> WHERE st2.st_num = in_std_num
+    -> AND a.at_repetition = 'n')
+    -> where st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+ERROR 1093 (HY000): You can't specify target table 'student' for update in FROM clause
+mysql> DROP PROCEDURE IF EXISTS update_stpoint;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_stpoint(
+    -> IN in_std_num INT)
+    -> BEGIN
+    ->     UPDATE student
+    ->     JOIN
+    ->     (
+    ->         SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->         FROM student st2
+    ->         JOIN attend a ON st2.st_num = a.at_st_num
+    ->         JOIN course c ON a.at_co_num = c.co_num
+    ->         JOIN subject sub ON sub.su_num = c.co_su_num
+    ->         WHERE st2.st_num = in_std_num
+    ->         AND a.at_repetition = 'n'
+    ->         GROUP BY st2.st_num
+    ->     ) t ON student.st_num = t.st_num
+    ->     SET student.st_point = t.total
+    ->     WHERE student.st_num = in_std_num;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint(2020123001);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        0 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |        0 |
+| 2020456001 | 강군    |       2 |        0 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql> DROP PROCEDURE IF EXISTS update_all_students;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_all_students()
+    -> BEGIN
+    ->     UPDATE student
+    ->     JOIN
+    ->     (
+    ->         SELECT st2.st_num, SUM(sub.su_point) AS total
+    ->         FROM student st2
+    ->         JOIN attend a ON st2.st_num = a.at_st_num
+    ->         JOIN course c ON a.at_co_num = c.co_num
+    ->         JOIN subject sub ON sub.su_num = c.co_su_num
+    ->         WHERE a.at_repetition = 'n'
+    ->         GROUP BY st2.st_num
+    ->     ) t ON student.st_num = t.st_num
+    ->     SET student.st_point = t.total;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> call update_stpoint();
+ERROR 1318 (42000): Incorrect number of arguments for PROCEDURE college.update_stpoint; expected 1, got 0
+mysql> call update_all_students();
+Query OK, 3 rows affected (0.00 sec)
+
+mysql> select * from studnet;
+ERROR 1146 (42S02): Table 'college.studnet' doesn't exist
+mysql> select * from student;
++------------+---------+---------+----------+
+| st_num     | st_name | st_term | st_point |
++------------+---------+---------+----------+
+| 2020123001 | 김영철  |       2 |        8 |
+| 2020123002 | 나영희  |       2 |        3 |
+| 2020160001 | 강철수  |       2 |        0 |
+| 2020160002 | 박철수  |       2 |       12 |
+| 2020456001 | 강군    |       2 |        8 |
++------------+---------+---------+----------+
+5 rows in set (0.00 sec)
+
+mysql>
