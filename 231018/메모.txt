@@ -1,0 +1,61 @@
+board table 구성
+>> _ 스네이크 표기법 사용
+
+유저 생성 구문
+create user 'springUser'@'localhost' identified by 'mysql'
+유저 권한 구문
+grant all privileges on springdb.* to 'springUser'@'localhost' with grant option;
+flush privileges;
+
+create table board(
+bno bigint not null auto_increment,
+title varchar(200) not null,
+content text,
+writer varchar(100) not null,
+reg_at datetime default now(),
+mod_at datetime default now(),
+read_count int default 0,
+cmt_qty int default 0,
+has_file int default 0,
+primary key (bno));
+
+
+		
+		
+		
+<!-- <dependency>
+<groupId>org.slf4j</groupId>
+<artifactId>jcl-over-slf4j</artifactId>
+<version>${org.slf4j-version}</version>
+<scope>runtime</scope>
+</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.slf4j</groupId> -->
+<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
+<!-- 			<version>${org.slf4j-version}</version> -->
+<!-- 			<scope>runtime</scope> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>log4j</groupId> -->
+<!-- 			<artifactId>log4j</artifactId> -->
+<!-- 			<version>1.2.15</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>javax.mail</groupId> -->
+<!-- 					<artifactId>mail</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>javax.jms</groupId> -->
+<!-- 					<artifactId>jms</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>com.sun.jdmk</groupId> -->
+<!-- 					<artifactId>jmxtools</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>com.sun.jmx</groupId> -->
+<!-- 					<artifactId>jmxri</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 			<scope>runtime</scope> -->
+<!-- 		</dependency> -->
