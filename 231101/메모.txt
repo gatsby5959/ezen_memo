@@ -1,0 +1,21 @@
+use springdb;
+delete from springdb.auth_member;
+delete from board;
+comment from auth_member;
+file from auth_member;
+member from auth_member;
+
+alter table comment add constraint fk_comm foreign key(bno)
+references board(bno) on delete cascade;
+
+
+alter table file add constraint fk_file foreign key(bno)
+references board(bno) on delete cascade;
+
+alter table auth_member add constraint fk_file 
+foreign key(email) references member(eamil) on delete cascade;
+
+
+
+alter table auth_member add constraint fk_file 
+foreign key(email) references member(email) on delete cascade;
